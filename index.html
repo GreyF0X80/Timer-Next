@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#050b14">
+    <meta name="theme-color" content="#0b0d11">
     <meta name="color-scheme" content="dark">
 
     <!-- iOS espone navigator.standalone; la classe serve come fallback a display-mode -->
@@ -1402,6 +1402,33 @@
         .app-settings-panel { background:var(--screen-bg) !important; }
         .settings-drawer-header { background:var(--screen-bg) !important; }
 
+        /* ==================== V15 UNIFORM FULL-SCREEN BACKGROUND ==================== */
+        html {
+            background: var(--screen-bg) !important;
+            color-scheme: dark;
+        }
+        body {
+            background: var(--screen-bg) !important;
+            background-color: var(--screen-bg) !important;
+            background-image: none !important;
+        }
+        /* Copre in modo uniforme anche safe-area, overscroll e bordi del viewport iOS. */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: -4px;
+            z-index: -1;
+            pointer-events: none;
+            background: var(--screen-bg);
+        }
+        #app, #app-header {
+            width: 100%;
+            max-width: none;
+            background: var(--screen-bg) !important;
+            background-color: var(--screen-bg) !important;
+            background-image: none !important;
+        }
+
     </style>
 </head>
 <body>
@@ -1588,7 +1615,7 @@
                 <h3 id="settings-info-title" class="settings-group-title">Informazioni</h3>
                 <div class="app-info-card">
                     <div class="app-info-line"><span>App</span><strong>Timer</strong></div>
-                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">1.7.1</strong></div>
+                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">1.7.2</strong></div>
                     <div class="app-info-line"><span>Stato</span><span id="network-status" class="network-status"><span class="network-dot"></span><strong id="network-status-label">Online</strong></span></div>
                     <div class="app-info-line"><span>Copyright</span><strong>© 2026 MC</strong></div>
                 </div>
@@ -1679,7 +1706,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             "use strict";
 
-            var APP_VERSION = '1.7.1';
+            var APP_VERSION = '1.7.2';
             var PREFERENCES_KEY = 'kp_timer_preferences_v1';
             var DEFAULT_APP_PREFERENCES = {
                 soundEnabled: true,
@@ -2117,7 +2144,7 @@
             function themeColorFor(name) {
                 if (name === 'standard') return '#03070d';
                 return {
-                    krio: '#050b14',
+                    krio: '#071523',
                     ice: '#02151d',
                     pulse: '#0b0715',
                     ember: '#150806',

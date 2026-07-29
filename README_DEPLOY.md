@@ -76,6 +76,10 @@ Versione 1.7.0: header separato menu/impostazioni, layout render, fix controlli.
 - icona Lavoro ridisegnata come manubrio vettoriale più leggibile.
 
 
-## Aggiornamento 1.7.1
+## Aggiornamento 1.7.2
 
 Sostituita e uniformata l'icona Standard/PWA con la versione Classic definitiva: anello esterno blu-ciano, anello interno rosso-arancio e numero 30 bianco. La stessa immagine viene usata nella Home screen, nel manifest e nell'interfaccia del tema Standard.
+
+
+### Correzione 1.7.2
+Sfondo uniforme su tutta la superficie iOS, comprese safe area, barra superiore, area centrale e bordi del viewport.

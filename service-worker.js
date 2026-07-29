@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timer-v14-final-classic-icon-2026-07-29';
+const CACHE_NAME = 'timer-v15-uniform-background-2026-07-29';
 const CORE_ASSETS = [
   './',
   './index.html',
