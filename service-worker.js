@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timer-v12-header-controls-2026-07-29';
+const CACHE_NAME = 'timer-v13-clean-ui-2026-07-29';
 const CORE_ASSETS = [
   './',
   './index.html',
