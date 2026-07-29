@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timer-v13-clean-ui-2026-07-29';
+const CACHE_NAME = 'timer-v14-final-classic-icon-2026-07-29';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const CORE_ASSETS = [
   './icons/icon-512.png',
   './icons/icon-maskable-192.png',
   './icons/icon-maskable-512.png',
+  './icons/timer-icon-classic-master.png',
   './icons/apple-touch-icon.png',
   './Logo-Blu.svg'
 ];

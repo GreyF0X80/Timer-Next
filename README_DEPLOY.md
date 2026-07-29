@@ -74,3 +74,8 @@ Versione 1.7.0: header separato menu/impostazioni, layout render, fix controlli.
 - pannello Impostazioni spostato fuori dal drawer sinistro, così compare correttamente sopra l’overlay;
 - gestione visibilità e z-index resa esplicita;
 - icona Lavoro ridisegnata come manubrio vettoriale più leggibile.
+
+
+## Aggiornamento 1.7.1
+
+Sostituita e uniformata l'icona Standard/PWA con la versione Classic definitiva: anello esterno blu-ciano, anello interno rosso-arancio e numero 30 bianco. La stessa immagine viene usata nella Home screen, nel manifest e nell'interfaccia del tema Standard.
