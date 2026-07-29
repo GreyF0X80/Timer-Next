@@ -67,10 +67,10 @@ Il Service Worker funziona su HTTPS o localhost. GitHub Pages usa HTTPS e non ri
 La release 1.5.0 usa l’icona multicolore neutra come icona PWA e come identità TIMER all’interno dei temi non-Krio. Il tema Krio continua a mostrare il logo KrioPlanet.
 
 
-Versione 1.6.1: header separato menu/impostazioni, layout render, fix controlli.
+Versione 1.6.2: header separato menu/impostazioni, layout render, fix controlli.
 
 
-## Correzioni 1.6.1
+## Correzioni 1.6.2
 - pannello Impostazioni spostato fuori dal drawer sinistro, così compare correttamente sopra l’overlay;
 - gestione visibilità e z-index resa esplicita;
 - icona Lavoro ridisegnata come manubrio vettoriale più leggibile.

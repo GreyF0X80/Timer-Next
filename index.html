@@ -1296,6 +1296,103 @@
             .ctrl-btn { width:54px; height:54px; }
         }
 
+
+        /* ==================== V12 POLISH: HEADER + TRANSPORT CONTROLS ==================== */
+        html[data-theme="standard"] {
+            --bg-dark: #090b0f;
+            --bg-top: #171b22;
+            --ambient-a: rgba(255,255,255,.025);
+            --ambient-b: rgba(76,96,118,.035);
+            --app-header-bg: #090b0f;
+        }
+        html[data-theme="krio"] {
+            --bg-dark: #050b14;
+            --bg-top: #0d1e30;
+            --ambient-a: rgba(0,240,255,.11);
+            --ambient-b: rgba(0,114,255,.10);
+            --app-header-bg: #071523;
+        }
+        #app-header {
+            background: var(--app-header-bg, var(--bg-dark));
+            border-bottom-color: rgba(255,255,255,.04);
+            box-shadow: none;
+        }
+        .header-action,
+        #logo-header {
+            background: transparent !important;
+            border: 0 !important;
+            border-radius: 0;
+            box-shadow: none !important;
+            color: #f4f8fc;
+        }
+        .header-action:active,
+        #logo-header:active {
+            background: transparent !important;
+            transform: scale(.9);
+            opacity: .72;
+        }
+        .header-svg-icon {
+            width: 31px;
+            height: 31px;
+            display: block;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.25;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 6px rgba(255,255,255,.08));
+        }
+        .gear-svg { width: 29px; height: 29px; stroke-width: 1.65; }
+        html[data-theme="krio"] #header-brand .brand-logo-krio {
+            box-sizing: border-box;
+            padding: 7px;
+            background: linear-gradient(145deg, #0b4380, #087ee8 58%, #00bfe8);
+            border: 1px solid rgba(111,226,255,.36);
+            border-radius: 50%;
+            filter: brightness(0) invert(1) drop-shadow(0 0 7px rgba(0,229,255,.28));
+            box-shadow: 0 0 17px rgba(0,126,232,.24), inset 0 1px 0 rgba(255,255,255,.18);
+        }
+        html[data-theme="krio"] #header-brand .brand-name-krio {
+            color: #fff;
+            text-shadow: 0 0 12px rgba(0,191,255,.18);
+        }
+        #timer-display {
+            justify-content: center;
+            padding-top: 0;
+        }
+        #ring-stage {
+            width: clamp(245px, 74vw, 450px);
+        }
+        #phase-heading {
+            margin-bottom: clamp(8px,1.5vh,14px);
+        }
+        #workout-summary {
+            padding-top: clamp(5px,.9vh,9px);
+        }
+        .transport-symbol {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            letter-spacing: -0.28em;
+            padding-right: .28em;
+            font-size: clamp(1.15rem,5vw,1.6rem);
+            line-height: 1;
+        }
+        @media (max-width: 390px) {
+            #ring-stage { width: clamp(238px, 72vw, 290px); }
+            .header-svg-icon { width: 29px; height: 29px; }
+            #header-brand { gap: 8px; }
+            #header-brand .brand-logo { width: 38px; height: 38px; }
+        }
+        @media (min-width: 700px) {
+            #ring-stage { width: min(49vh, 465px); }
+        }
+        @media (max-height: 700px) {
+            #timer-display { justify-content: flex-start; }
+            #ring-stage { width: clamp(205px,57vh,320px); }
+        }
+
     </style>
 </head>
 <body>
@@ -1303,7 +1400,9 @@
     <!-- HEADER APP: menu allenamento a sinistra, identità al centro, impostazioni a destra -->
     <header id="app-header" aria-label="Barra superiore Timer">
         <button id="logo-header" class="header-action" type="button" aria-label="Apri configurazione allenamento">
-            <span class="hamburger-icon" aria-hidden="true">☰</span>
+            <svg class="header-svg-icon hamburger-svg" aria-hidden="true" viewBox="0 0 32 32">
+                <path d="M5 9h22M5 16h22M5 23h22" />
+            </svg>
         </button>
         <div id="header-brand" aria-label="Timer">
             <img class="brand-logo brand-logo-krio" src="Logo-Blu.svg" alt="KrioPlanet">
@@ -1312,7 +1411,11 @@
             <span class="brand-name brand-name-timer">TIMER</span>
         </div>
         <button id="settings-open" class="header-action" type="button" aria-label="Apri impostazioni app">
-            <span class="gear-icon" aria-hidden="true">⚙</span>
+            <svg class="header-svg-icon gear-svg" aria-hidden="true" viewBox="0 0 32 32">
+                <circle cx="16" cy="16" r="4.2" />
+                <path d="M16 3.8v3.1M16 25.1v3.1M3.8 16h3.1M25.1 16h3.1M7.35 7.35l2.2 2.2M22.45 22.45l2.2 2.2M24.65 7.35l-2.2 2.2M9.55 22.45l-2.2 2.2" />
+                <path d="M11.5 5.5l1.1 2.6a9.2 9.2 0 0 1 6.8 0l1.1-2.6 4 2.3-1.7 2.3a9.2 9.2 0 0 1 1.7 5.9l2.8.4v4.6l-2.8.4a9.2 9.2 0 0 1-1.7 5.9l1.7 2.3-4 2.3-1.1-2.6a9.2 9.2 0 0 1-6.8 0l-1.1 2.6-4-2.3 1.7-2.3a9.2 9.2 0 0 1-1.7-5.9l-2.8-.4v-4.6l2.8-.4a9.2 9.2 0 0 1 1.7-5.9L7.5 7.8z" />
+            </svg>
         </button>
     </header>
 
@@ -1568,10 +1671,10 @@
 
         <!-- CONTROLLI -->
         <div id="controls">
-            <button id="btn-skip-back" class="ctrl-btn" aria-label="Fase precedente"><span class="control-symbol">↶</span><span class="control-label">INDIETRO</span></button>
+            <button id="btn-skip-back" class="ctrl-btn" aria-label="Fase precedente"><span class="control-symbol transport-symbol" aria-hidden="true">◀◀</span><span class="control-label">INDIETRO</span></button>
             <button id="btn-start" class="ctrl-btn idle" aria-label="Avvia"><span class="control-symbol">▶</span><span class="control-label">PARTI</span></button>
             <button id="btn-stop" class="ctrl-btn" aria-label="Interrompi"><span class="control-symbol">■</span><span class="control-label">STOP</span></button>
-            <button id="btn-skip-forward" class="ctrl-btn" aria-label="Fase successiva"><span class="control-symbol">↷</span><span class="control-label">AVANTI</span></button>
+            <button id="btn-skip-forward" class="ctrl-btn" aria-label="Fase successiva"><span class="control-symbol transport-symbol" aria-hidden="true">▶▶</span><span class="control-label">AVANTI</span></button>
             <button id="btn-pause" style="display:none;"></button>
             <button id="btn-skip" style="display:none;"></button>
             <button id="btn-reset" style="display:none;"></button>
@@ -1582,7 +1685,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             "use strict";
 
-            var APP_VERSION = '1.6.1';
+            var APP_VERSION = '1.6.2';
             var PREFERENCES_KEY = 'kp_timer_preferences_v1';
             var DEFAULT_APP_PREFERENCES = {
                 soundEnabled: true,
