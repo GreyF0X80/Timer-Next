@@ -27,8 +27,23 @@
         (function () {
             try {
                 var saved = JSON.parse(localStorage.getItem('kp_timer_preferences_v1') || '{}');
-                if (saved.theme && ['krio', 'standard'].indexOf(saved.theme) !== -1) {
+                if (saved.theme && ['krio', 'standard', 'custom'].indexOf(saved.theme) !== -1) {
                     document.documentElement.setAttribute('data-theme', saved.theme);
+                    if (saved.theme === 'custom') {
+                        var root = document.documentElement;
+                        var bg = saved.customBackground || '#10141b';
+                        var accent = saved.customAccent || '#00dfff';
+                        var icon = saved.customIconColor || '#ffffff';
+                        var brand = saved.customTextColor || '#ffffff';
+                        root.style.setProperty('--screen-bg', bg);
+                        root.style.setProperty('--bg-dark', bg);
+                        root.style.setProperty('--surface-drawer', bg);
+                        root.style.setProperty('--surface-modal', bg);
+                        root.style.setProperty('--primary-cyan', accent);
+                        root.style.setProperty('--primary-blue', accent);
+                        root.style.setProperty('--custom-icon-color', icon);
+                        root.style.setProperty('--custom-brand-color', brand);
+                    }
                 }
             } catch (e) {}
         }());
@@ -1127,45 +1142,50 @@
         }
         #next-phase strong { color:var(--next-color,#fff); letter-spacing:.7px; }
 
-        /* PALLINI DI AVANZAMENTO */
+        /* TIMELINE DELLE SESSIONI: ogni pallino rappresenta una fase reale */
         #progress-dots-container {
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 12px 0;
+            padding: 10px 0;
             flex-shrink: 0;
             min-height: 24px;
         }
         #progress-dots {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            align-items: center;
+            gap: clamp(4px, 1.15vw, 7px);
             flex-wrap: wrap;
-            max-width: 85%;
+            max-width: min(92%, 590px);
         }
         .dot {
-            width: clamp(7px, 1.5vw, 11px);
-            height: clamp(7px, 1.5vw, 11px);
+            --dot-color: rgba(255,255,255,.18);
+            width: clamp(7px, 1.55vw, 10px);
+            height: clamp(7px, 1.55vw, 10px);
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.12);
-            transition: all 0.3s ease;
+            background: var(--dot-color);
+            box-shadow: 0 0 7px color-mix(in srgb, var(--dot-color) 44%, transparent);
+            opacity: .82;
+            transition: transform .24s ease, opacity .24s ease, filter .24s ease, box-shadow .24s ease;
             flex-shrink: 0;
         }
+        .dot.phase-work  { --dot-color:#44ef35; }
+        .dot.phase-rest  { --dot-color:#ff7a19; }
+        .dot.phase-extra { --dot-color:#e641df; }
         .dot.done {
-            background: var(--work-green);
-            box-shadow: 0 0 8px rgba(56, 239, 125, 0.5);
+            opacity: .22;
+            filter: saturate(.55) brightness(.62);
+            box-shadow: none;
         }
         .dot.current {
-            background: var(--warning-yellow);
-            box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
-            transform: scale(1.2);
+            opacity: 1;
+            transform: scale(1.38);
+            filter: saturate(1.2) brightness(1.18);
+            box-shadow: 0 0 5px var(--dot-color), 0 0 13px color-mix(in srgb, var(--dot-color) 78%, transparent);
         }
-        .dot.extra-dot {
-            background: var(--extra-blue);
-            box-shadow: 0 0 8px rgba(0, 180, 216, 0.6);
-            transform: scale(1.2);
-        }
+        .dot.future { opacity:.78; }
 
         /* ==================== CONTROLLI CIRCOLARI ==================== */
         #controls { width:100%; display:flex; align-items:flex-start; justify-content:center; gap:clamp(10px,3.5vw,22px); padding:2px 0 7px; flex-shrink:0; }
@@ -1179,6 +1199,33 @@
         #btn-skip-back,#btn-skip-forward { color:#7394b9; display:none; }
         #btn-stop { color:#ff4055; display:none; }
         #btn-pause,#btn-skip,#btn-reset { display:none !important; }
+
+        /* Icone trasporto uniformi: stile stereo, geometrie piene e stessa gabbia ottica */
+        .control-symbol {
+            width:clamp(22px,6vw,30px);
+            height:clamp(22px,6vw,30px);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            line-height:0;
+            font-size:0;
+            font-weight:400;
+            flex:0 0 auto;
+        }
+        .control-symbol svg {
+            width:100%;
+            height:100%;
+            display:block;
+            overflow:visible;
+            fill:currentColor;
+            stroke:none;
+        }
+        .control-symbol.transport-symbol { width:clamp(24px,6.4vw,32px); height:clamp(24px,6.4vw,32px); }
+        .control-symbol[data-icon="pause"] svg { width:84%; height:84%; }
+        .control-symbol[data-icon="stop"] svg { width:76%; height:76%; }
+        .control-symbol[data-icon="play"] svg { width:82%; height:82%; transform:translateX(4%); }
+        .control-symbol[data-icon="rewind"] svg { transform:translateX(-2%); }
+        .control-symbol[data-icon="forward"] svg { transform:translateX(2%); }
 
         /* ==================== COLORI DINAMICI FASI ==================== */
         .phase-work #phase-label,.phase-work #phase-icon { color:#56ef35; text-shadow:0 0 18px rgba(57,255,20,.45); }
@@ -1429,7 +1476,337 @@
             background-image: none !important;
         }
 
-    </style>
+    
+
+        /* ==================== V17 CONTROL ALIGNMENT ==================== */
+        #controls {
+            align-items: center;
+        }
+        .ctrl-btn {
+            border-width: 2px;
+            display: grid;
+            grid-template-rows: 29px 12px;
+            grid-template-columns: 1fr;
+            place-items: center;
+            align-content: center;
+            row-gap: 4px;
+            padding: 7px 0 6px;
+            line-height: 1;
+            box-shadow:
+                0 0 18px color-mix(in srgb, currentColor 34%, transparent),
+                inset 0 0 0 1px color-mix(in srgb, currentColor 10%, transparent),
+                inset 0 0 15px rgba(255,255,255,.02);
+        }
+        .control-symbol,
+        .control-symbol.transport-symbol {
+            width: 27px;
+            height: 27px;
+            display: grid;
+            place-items: center;
+            padding: 0;
+            margin: 0;
+            font-size: 0;
+            line-height: 0;
+            letter-spacing: 0;
+            transform: none;
+        }
+        .control-symbol svg {
+            width: 27px;
+            height: 27px;
+            margin: 0;
+            transform: none;
+            transform-origin: 50% 50%;
+        }
+        .control-symbol[data-icon="play"] svg { width: 24px; height: 24px; transform: translateX(1px); }
+        .control-symbol[data-icon="pause"] svg { width: 23px; height: 23px; }
+        .control-symbol[data-icon="stop"] svg { width: 21px; height: 21px; }
+        .control-symbol[data-icon="rewind"] svg,
+        .control-symbol[data-icon="forward"] svg { width: 25px; height: 25px; }
+        .control-label {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            font-size: clamp(.46rem,1.8vw,.61rem);
+            line-height: 12px;
+            letter-spacing: .55px;
+            white-space: nowrap;
+        }
+        @media (max-width: 390px) {
+            .ctrl-btn {
+                grid-template-rows: 27px 11px;
+                row-gap: 3px;
+                padding: 6px 0 5px;
+            }
+            .control-symbol,
+            .control-symbol.transport-symbol,
+            .control-symbol svg { width: 25px; height: 25px; }
+            .control-symbol[data-icon="play"] svg { width: 22px; height: 22px; }
+            .control-symbol[data-icon="pause"] svg { width: 21px; height: 21px; }
+            .control-symbol[data-icon="stop"] svg { width: 19px; height: 19px; }
+            .control-symbol[data-icon="rewind"] svg,
+            .control-symbol[data-icon="forward"] svg { width: 23px; height: 23px; }
+            .control-label { line-height: 11px; }
+        }
+
+        /* ==================== V19 CUSTOM BRANDING ==================== */
+        html[data-theme="custom"] {
+            --screen-bg:#10141b;
+            --surface-drawer:#10141b;
+            --surface-modal:#10141b;
+            --custom-icon-color:#ffffff;
+            --custom-brand-color:#ffffff;
+        }
+        html[data-theme="custom"],
+        html[data-theme="custom"] body,
+        html[data-theme="custom"] #app,
+        html[data-theme="custom"] #app-header,
+        html[data-theme="custom"] .app-settings-panel,
+        html[data-theme="custom"] .settings-drawer-header {
+            background:var(--screen-bg) !important;
+            background-color:var(--screen-bg) !important;
+            background-image:none !important;
+        }
+        html[data-theme="custom"] .header-action,
+        html[data-theme="custom"] #logo-header {
+            color:var(--custom-icon-color) !important;
+        }
+        html[data-theme="custom"] .brand-name-custom {
+            color:var(--custom-brand-color) !important;
+            -webkit-text-fill-color:var(--custom-brand-color) !important;
+            background:none !important;
+            text-shadow:0 0 12px color-mix(in srgb,var(--custom-brand-color) 28%,transparent);
+        }
+
+        .brand-logo-custom,
+        .brand-name-custom { display:none !important; }
+
+        html[data-theme="custom"] .brand-logo-krio,
+        html[data-theme="custom"] .brand-name-krio,
+        html[data-theme="custom"] .brand-logo-timer,
+        html[data-theme="custom"] .brand-name-timer {
+            display:none !important;
+        }
+        html[data-theme="custom"] .brand-logo-custom { display:block !important; }
+        html[data-theme="custom"] .brand-name-custom { display:inline !important; }
+
+        #header-brand .brand-logo-custom {
+            width:42px;
+            height:42px;
+            border-radius:10px;
+            object-fit:contain;
+            background:rgba(255,255,255,.035);
+            box-shadow:0 0 12px color-mix(in srgb,var(--primary-cyan) 35%,transparent);
+        }
+        #drawer-header .brand-logo-custom {
+            width:38px;
+            height:38px;
+            border-radius:9px;
+            object-fit:contain;
+            background:rgba(255,255,255,.035);
+        }
+
+        .theme-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+        .theme-swatch.custom {
+            background:conic-gradient(from 30deg,#ff3b30,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de,#ff2d55,#ff3b30);
+        }
+
+        .custom-theme-editor {
+            display:none;
+            margin-top:12px;
+            padding-top:12px;
+            border-top:1px solid rgba(255,255,255,.08);
+        }
+        .custom-theme-editor.active { display:block; }
+        .custom-preview {
+            min-height:62px;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding:10px;
+            margin-bottom:10px;
+            border:1px solid rgba(255,255,255,.09);
+            border-radius:13px;
+            background:rgba(255,255,255,.035);
+        }
+        .custom-preview img {
+            width:44px;
+            height:44px;
+            object-fit:contain;
+            border-radius:10px;
+            background:rgba(255,255,255,.035);
+        }
+        .custom-preview strong {
+            display:block;
+            color:var(--custom-brand-color,#fff);
+            font-size:.9rem;
+            letter-spacing:1.3px;
+            max-width:190px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+        .custom-preview small { color:var(--text-muted); font-size:.67rem; }
+
+        .settings-text-input {
+            width:155px;
+            min-height:38px;
+            border:1px solid rgba(255,255,255,.12);
+            border-radius:10px;
+            background:rgba(0,0,0,.22);
+            color:#fff;
+            padding:7px 10px;
+            font:inherit;
+            user-select:text;
+            outline:none;
+        }
+        .settings-text-input:focus { border-color:var(--primary-cyan); }
+
+        .compact-upload {
+            flex:0 0 auto;
+            min-width:112px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:0 10px;
+        }
+        .visually-hidden {
+            position:absolute !important;
+            width:1px !important;
+            height:1px !important;
+            padding:0 !important;
+            margin:-1px !important;
+            overflow:hidden !important;
+            clip:rect(0,0,0,0) !important;
+            white-space:nowrap !important;
+            border:0 !important;
+        }
+
+        .custom-color-grid {
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:8px;
+            margin-top:10px;
+        }
+        .custom-color-control {
+            min-width:0;
+            display:grid;
+            grid-template-columns:1fr 42px;
+            align-items:center;
+            gap:7px;
+            padding:9px;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:11px;
+            background:rgba(255,255,255,.03);
+        }
+        .custom-color-control span {
+            grid-column:1;
+            font-size:.7rem;
+            font-weight:650;
+            color:#f4f7fb;
+        }
+        .custom-color-control input[type="color"] {
+            grid-column:2;
+            grid-row:1 / span 2;
+            width:38px;
+            height:38px;
+            padding:0;
+            border:1px solid rgba(255,255,255,.18);
+            border-radius:50%;
+            overflow:hidden;
+            background:transparent;
+            cursor:pointer;
+        }
+        .custom-color-control input[type="color"]::-webkit-color-swatch-wrapper { padding:0; }
+        .custom-color-control input[type="color"]::-webkit-color-swatch { border:0; border-radius:50%; }
+        .custom-color-control output {
+            grid-column:1;
+            font-size:.62rem;
+            color:var(--text-muted);
+            font-variant-numeric:tabular-nums;
+        }
+        .custom-storage-note { margin-top:10px; }
+
+        /* Recupero più acceso, “arancio fuoco”. */
+        .dot.phase-rest { --dot-color:#ff5618; }
+        .summary-rest { --sum-gradient:linear-gradient(135deg,#b71915,#ff4b18 52%,#ff8a1f); --sum-glow:rgba(255,78,24,.62); }
+
+        @media (max-width:420px) {
+            .theme-grid { grid-template-columns:1fr; }
+            .custom-color-grid { grid-template-columns:1fr; }
+            .settings-text-input { width:142px; }
+        }
+
+
+        /* ==================== V20 SETTINGS SWITCHES ==================== */
+        .settings-toggle-row .switch {
+            position: relative;
+            flex: 0 0 auto;
+            width: 48px;
+            height: 28px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.14);
+            border: 1.5px solid rgba(255,255,255,.16);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,.38);
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: background .22s ease, border-color .22s ease, box-shadow .22s ease;
+        }
+
+        .settings-toggle-row .switch::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f7f9fc;
+            box-shadow: 0 2px 7px rgba(0,0,0,.42);
+            transition: transform .22s cubic-bezier(.2,.8,.2,1), background .22s ease;
+        }
+
+        .settings-toggle-row .switch.active {
+            background: linear-gradient(135deg, var(--primary-cyan), var(--primary-blue));
+            border-color: color-mix(in srgb, var(--primary-cyan) 72%, white 12%);
+            box-shadow:
+                0 0 13px color-mix(in srgb, var(--primary-cyan) 38%, transparent),
+                inset 0 1px 2px rgba(255,255,255,.18);
+        }
+
+        .settings-toggle-row .switch.active::after {
+            transform: translateX(20px);
+            background: #ffffff;
+        }
+
+        .settings-toggle-row .switch:focus-visible {
+            outline: 2px solid var(--primary-cyan);
+            outline-offset: 3px;
+        }
+
+        .settings-toggle-row .switch[aria-checked="false"] {
+            background: rgba(255,255,255,.12);
+        }
+
+        .settings-toggle-row .switch[aria-checked="true"] {
+            background: linear-gradient(135deg, var(--primary-cyan), var(--primary-blue));
+        }
+
+        @media (max-width: 420px) {
+            .settings-toggle-row .switch {
+                width: 46px;
+                height: 27px;
+            }
+            .settings-toggle-row .switch::after {
+                width: 19px;
+                height: 19px;
+            }
+            .settings-toggle-row .switch.active::after {
+                transform: translateX(19px);
+            }
+        }
+
+</style>
 </head>
 <body>
 
@@ -1443,8 +1820,10 @@
         <div id="header-brand" aria-label="Timer">
             <img class="brand-logo brand-logo-krio" src="Logo-Blu.svg" alt="KrioPlanet">
             <img class="brand-logo brand-logo-timer" src="./icons/icon-192.png" alt="Timer">
+            <img class="brand-logo brand-logo-custom" src="./icons/icon-192.png" alt="Logo personalizzato">
             <span class="brand-name brand-name-krio">KRIOPLANET</span>
             <span class="brand-name brand-name-timer">TIMER</span>
+            <span class="brand-name brand-name-custom">TIMER</span>
         </div>
         <button id="settings-open" class="header-action" type="button" aria-label="Apri impostazioni app">
             <svg class="header-svg-icon gear-svg" aria-hidden="true" viewBox="0 0 24 24">
@@ -1462,8 +1841,10 @@
             <div class="logo-large">
                 <img class="brand-logo brand-logo-krio" src="Logo-Blu.svg" alt="KrioPlanet">
                 <img class="brand-logo brand-logo-timer" src="./icons/icon-192.png" alt="Timer">
+                <img class="brand-logo brand-logo-custom" src="./icons/icon-192.png" alt="Logo personalizzato">
                 <span class="brand-name-krio">KRIOPLANET</span>
                 <span class="brand-name-timer">TIMER</span>
+                <span class="brand-name-custom">TIMER</span>
             </div>
             <button id="drawer-close" aria-label="Chiudi menu">✕</button>
         </div>
@@ -1608,6 +1989,55 @@
                 <div class="theme-grid" role="group" aria-label="Selezione tema">
                     <button class="theme-btn" type="button" data-theme-choice="standard"><span class="theme-swatch standard"></span><span>Standard</span></button>
                     <button class="theme-btn" type="button" data-theme-choice="krio"><span class="theme-swatch krio"></span><span>KrioPlanet</span></button>
+                    <button class="theme-btn" type="button" data-theme-choice="custom"><span class="theme-swatch custom"></span><span>Personalizzato</span></button>
+                </div>
+
+                <div id="custom-theme-editor" class="custom-theme-editor" aria-hidden="true">
+                    <div class="custom-preview">
+                        <img id="custom-logo-preview" src="./icons/icon-192.png" alt="Anteprima logo">
+                        <div><strong id="custom-name-preview">TIMER</strong><small>Anteprima identità</small></div>
+                    </div>
+
+                    <div class="settings-field custom-name-field">
+                        <div><label for="custom-brand-name">Nome</label><small>Massimo 20 caratteri</small></div>
+                        <input id="custom-brand-name" class="settings-text-input" type="text" maxlength="20" value="TIMER" autocomplete="off" spellcheck="false">
+                    </div>
+
+                    <div class="settings-field custom-logo-field">
+                        <div><label for="custom-logo-input">Logo</label><small>PNG, JPEG, WebP o SVG · massimo 2 MB</small></div>
+                        <label class="settings-action-btn compact-upload" for="custom-logo-input">CARICA LOGO</label>
+                        <input id="custom-logo-input" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+                    </div>
+
+                    <div class="custom-color-grid">
+                        <label class="custom-color-control">
+                            <span>Sfondo</span>
+                            <input id="custom-background-color" type="color" value="#10141b" aria-label="Colore sfondo personalizzato">
+                            <output id="custom-background-value">#10141B</output>
+                        </label>
+                        <label class="custom-color-control">
+                            <span>Icone superiori</span>
+                            <input id="custom-icon-color" type="color" value="#ffffff" aria-label="Colore icone superiori">
+                            <output id="custom-icon-value">#FFFFFF</output>
+                        </label>
+                        <label class="custom-color-control">
+                            <span>Accento</span>
+                            <input id="custom-accent-color" type="color" value="#00dfff" aria-label="Colore accento">
+                            <output id="custom-accent-value">#00DFFF</output>
+                        </label>
+                        <label class="custom-color-control">
+                            <span>Testo brand</span>
+                            <input id="custom-text-color" type="color" value="#ffffff" aria-label="Colore testo brand">
+                            <output id="custom-text-value">#FFFFFF</output>
+                        </label>
+                    </div>
+
+                    <p class="settings-help custom-storage-note">Logo e personalizzazioni vengono memorizzati esclusivamente su questo dispositivo e restano disponibili offline.</p>
+
+                    <div class="settings-action-row">
+                        <button id="btn-remove-custom-logo" class="settings-action-btn" type="button">RIMUOVI LOGO</button>
+                        <button id="btn-reset-custom-theme" class="settings-action-btn danger" type="button">RIPRISTINA TEMA</button>
+                    </div>
                 </div>
             </section>
 
@@ -1615,7 +2045,7 @@
                 <h3 id="settings-info-title" class="settings-group-title">Informazioni</h3>
                 <div class="app-info-card">
                     <div class="app-info-line"><span>App</span><strong>Timer</strong></div>
-                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">1.7.2</strong></div>
+                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">1.9.1</strong></div>
                     <div class="app-info-line"><span>Stato</span><span id="network-status" class="network-status"><span class="network-dot"></span><strong id="network-status-label">Online</strong></span></div>
                     <div class="app-info-line"><span>Copyright</span><strong>© 2026 MC</strong></div>
                 </div>
@@ -1692,10 +2122,10 @@
 
         <!-- CONTROLLI -->
         <div id="controls">
-            <button id="btn-skip-back" class="ctrl-btn" aria-label="Fase precedente"><span class="control-symbol transport-symbol" aria-hidden="true">◀◀</span><span class="control-label">INDIETRO</span></button>
-            <button id="btn-start" class="ctrl-btn idle" aria-label="Avvia"><span class="control-symbol">▶</span><span class="control-label">PARTI</span></button>
-            <button id="btn-stop" class="ctrl-btn" aria-label="Interrompi"><span class="control-symbol">■</span><span class="control-label">STOP</span></button>
-            <button id="btn-skip-forward" class="ctrl-btn" aria-label="Fase successiva"><span class="control-symbol transport-symbol" aria-hidden="true">▶▶</span><span class="control-label">AVANTI</span></button>
+            <button id="btn-skip-back" class="ctrl-btn" aria-label="Fase precedente"><span class="control-symbol transport-symbol" data-icon="rewind" aria-hidden="true"></span><span class="control-label">INDIETRO</span></button>
+            <button id="btn-start" class="ctrl-btn idle" aria-label="Avvia"><span class="control-symbol" data-icon="play" aria-hidden="true"></span><span class="control-label">PARTI</span></button>
+            <button id="btn-stop" class="ctrl-btn" aria-label="Interrompi"><span class="control-symbol" data-icon="stop" aria-hidden="true"></span><span class="control-label">STOP</span></button>
+            <button id="btn-skip-forward" class="ctrl-btn" aria-label="Fase successiva"><span class="control-symbol transport-symbol" data-icon="forward" aria-hidden="true"></span><span class="control-label">AVANTI</span></button>
             <button id="btn-pause" style="display:none;"></button>
             <button id="btn-skip" style="display:none;"></button>
             <button id="btn-reset" style="display:none;"></button>
@@ -1706,7 +2136,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             "use strict";
 
-            var APP_VERSION = '1.7.2';
+            var APP_VERSION = '1.9.1';
             var PREFERENCES_KEY = 'kp_timer_preferences_v1';
             var DEFAULT_APP_PREFERENCES = {
                 soundEnabled: true,
@@ -1716,7 +2146,12 @@
                 countdownEnabled: true,
                 vibrationEnabled: true,
                 theme: 'standard',
-                tickEnabled: false
+                tickEnabled: false,
+                customBrandName: 'TIMER',
+                customBackground: '#10141b',
+                customIconColor: '#ffffff',
+                customAccent: '#00dfff',
+                customTextColor: '#ffffff'
             };
             var appPreferences = Object.assign({}, DEFAULT_APP_PREFERENCES);
 
@@ -1850,6 +2285,26 @@
             var appVersionLabel = document.getElementById('app-version-label');
             var networkStatus = document.getElementById('network-status');
             var networkStatusLabel = document.getElementById('network-status-label');
+
+            // DOM tema personalizzato
+            var customThemeEditor = document.getElementById('custom-theme-editor');
+            var customBrandName = document.getElementById('custom-brand-name');
+            var customNamePreview = document.getElementById('custom-name-preview');
+            var customLogoInput = document.getElementById('custom-logo-input');
+            var customLogoPreview = document.getElementById('custom-logo-preview');
+            var customBackgroundColor = document.getElementById('custom-background-color');
+            var customIconColor = document.getElementById('custom-icon-color');
+            var customAccentColor = document.getElementById('custom-accent-color');
+            var customTextColor = document.getElementById('custom-text-color');
+            var customBackgroundValue = document.getElementById('custom-background-value');
+            var customIconValue = document.getElementById('custom-icon-value');
+            var customAccentValue = document.getElementById('custom-accent-value');
+            var customTextValue = document.getElementById('custom-text-value');
+            var btnRemoveCustomLogo = document.getElementById('btn-remove-custom-logo');
+            var btnResetCustomTheme = document.getElementById('btn-reset-custom-theme');
+            var customLogoNodes = document.querySelectorAll('.brand-logo-custom');
+            var customNameNodes = document.querySelectorAll('.brand-name-custom');
+            var customLogoObjectUrl = null;
 
             // DOM Libreria Modal & Save Drawer
             var libraryItemsList = document.getElementById('library-items-list');
@@ -2115,7 +2570,12 @@
                 var clean = Object.assign({}, DEFAULT_APP_PREFERENCES, raw || {});
                 if (['digital', 'energy', 'soft', 'retro', 'bell', 'minimal'].indexOf(clean.soundProfile) === -1) clean.soundProfile = 'digital';
                 if (['profile', 'double-bell', 'alarm', 'siren', 'buzzer', 'whistle'].indexOf(clean.endAlertProfile) === -1) clean.endAlertProfile = 'profile';
-                if (['krio', 'standard'].indexOf(clean.theme) === -1) clean.theme = 'standard';
+                if (['krio', 'standard', 'custom'].indexOf(clean.theme) === -1) clean.theme = 'standard';
+                clean.customBrandName = String(clean.customBrandName || 'TIMER').trim().slice(0, 20) || 'TIMER';
+                ['customBackground', 'customIconColor', 'customAccent', 'customTextColor'].forEach(function(key) {
+                    if (!/^#[0-9a-f]{6}$/i.test(String(clean[key] || ''))) clean[key] = DEFAULT_APP_PREFERENCES[key];
+                    clean[key] = clean[key].toLowerCase();
+                });
                 clean.volume = Math.min(1, Math.max(0, Number(clean.volume)));
                 ['soundEnabled', 'countdownEnabled', 'vibrationEnabled', 'tickEnabled'].forEach(function(key) {
                     clean[key] = clean[key] === true;
@@ -2142,26 +2602,148 @@
             }
 
             function themeColorFor(name) {
-                if (name === 'standard') return '#03070d';
-                return {
-                    krio: '#071523',
-                    ice: '#02151d',
-                    pulse: '#0b0715',
-                    ember: '#150806',
-                    aurora: '#03120f',
-                    neon: '#140619'
-                }[name] || '#050b14';
+                if (name === 'standard') return '#0b0d11';
+                if (name === 'krio') return '#071523';
+                if (name === 'custom') return appPreferences.customBackground || '#10141b';
+                return '#0b0d11';
+            }
+
+            function setCustomCssVariables() {
+                var root = document.documentElement;
+                var bg = appPreferences.customBackground;
+                var accent = appPreferences.customAccent;
+                root.style.setProperty('--screen-bg', bg);
+                root.style.setProperty('--bg-dark', bg);
+                root.style.setProperty('--surface-drawer', bg);
+                root.style.setProperty('--surface-modal', bg);
+                root.style.setProperty('--primary-cyan', accent);
+                root.style.setProperty('--primary-blue', accent);
+                root.style.setProperty('--glow-cyan', hexToRgba(accent, .34));
+                root.style.setProperty('--custom-icon-color', appPreferences.customIconColor);
+                root.style.setProperty('--custom-brand-color', appPreferences.customTextColor);
+            }
+
+            function clearCustomCssVariables() {
+                ['--screen-bg','--bg-dark','--surface-drawer','--surface-modal','--primary-cyan','--primary-blue','--glow-cyan','--custom-icon-color','--custom-brand-color'].forEach(function(name) {
+                    document.documentElement.style.removeProperty(name);
+                });
+            }
+
+            function hexToRgba(hex, alpha) {
+                var value = String(hex || '').replace('#','');
+                if (!/^[0-9a-f]{6}$/i.test(value)) return 'rgba(0,223,255,' + alpha + ')';
+                var num = parseInt(value, 16);
+                return 'rgba(' + ((num >> 16) & 255) + ',' + ((num >> 8) & 255) + ',' + (num & 255) + ',' + alpha + ')';
+            }
+
+            function updateCustomBrandText() {
+                var name = appPreferences.customBrandName || 'TIMER';
+                customNameNodes.forEach(function(node) { node.textContent = name; });
+                if (customNamePreview) customNamePreview.textContent = name;
+                if (customBrandName && customBrandName.value !== name) customBrandName.value = name;
+            }
+
+            var CUSTOM_DB_NAME = 'timer_custom_branding_v1';
+            var CUSTOM_DB_STORE = 'assets';
+            var CUSTOM_LOGO_KEY = 'custom-logo';
+
+            function openCustomBrandDb() {
+                return new Promise(function(resolve, reject) {
+                    if (!('indexedDB' in window)) return reject(new Error('IndexedDB non disponibile'));
+                    var request = indexedDB.open(CUSTOM_DB_NAME, 1);
+                    request.onupgradeneeded = function() {
+                        var db = request.result;
+                        if (!db.objectStoreNames.contains(CUSTOM_DB_STORE)) db.createObjectStore(CUSTOM_DB_STORE);
+                    };
+                    request.onsuccess = function() { resolve(request.result); };
+                    request.onerror = function() { reject(request.error || new Error('Errore IndexedDB')); };
+                });
+            }
+
+            function saveCustomLogoBlob(blob) {
+                return openCustomBrandDb().then(function(db) {
+                    return new Promise(function(resolve, reject) {
+                        var tx = db.transaction(CUSTOM_DB_STORE, 'readwrite');
+                        tx.objectStore(CUSTOM_DB_STORE).put(blob, CUSTOM_LOGO_KEY);
+                        tx.oncomplete = function() { db.close(); resolve(); };
+                        tx.onerror = function() { db.close(); reject(tx.error); };
+                    });
+                });
+            }
+
+            function readCustomLogoBlob() {
+                return openCustomBrandDb().then(function(db) {
+                    return new Promise(function(resolve, reject) {
+                        var tx = db.transaction(CUSTOM_DB_STORE, 'readonly');
+                        var req = tx.objectStore(CUSTOM_DB_STORE).get(CUSTOM_LOGO_KEY);
+                        req.onsuccess = function() { db.close(); resolve(req.result || null); };
+                        req.onerror = function() { db.close(); reject(req.error); };
+                    });
+                }).catch(function() { return null; });
+            }
+
+            function deleteCustomLogoBlob() {
+                return openCustomBrandDb().then(function(db) {
+                    return new Promise(function(resolve, reject) {
+                        var tx = db.transaction(CUSTOM_DB_STORE, 'readwrite');
+                        tx.objectStore(CUSTOM_DB_STORE).delete(CUSTOM_LOGO_KEY);
+                        tx.oncomplete = function() { db.close(); resolve(); };
+                        tx.onerror = function() { db.close(); reject(tx.error); };
+                    });
+                }).catch(function() {});
+            }
+
+            function applyCustomLogoBlob(blob) {
+                if (customLogoObjectUrl) {
+                    URL.revokeObjectURL(customLogoObjectUrl);
+                    customLogoObjectUrl = null;
+                }
+                var source = './icons/icon-192.png';
+                if (blob) {
+                    customLogoObjectUrl = URL.createObjectURL(blob);
+                    source = customLogoObjectUrl;
+                }
+                customLogoNodes.forEach(function(node) { node.src = source; });
+                if (customLogoPreview) customLogoPreview.src = source;
+            }
+
+            function loadCustomLogo() {
+                return readCustomLogoBlob().then(applyCustomLogoBlob);
+            }
+
+            function syncCustomEditor() {
+                if (!customThemeEditor) return;
+                var customActive = appPreferences.theme === 'custom';
+                customThemeEditor.classList.toggle('active', customActive);
+                customThemeEditor.setAttribute('aria-hidden', customActive ? 'false' : 'true');
+                updateCustomBrandText();
+
+                var fields = [
+                    [customBackgroundColor, customBackgroundValue, appPreferences.customBackground],
+                    [customIconColor, customIconValue, appPreferences.customIconColor],
+                    [customAccentColor, customAccentValue, appPreferences.customAccent],
+                    [customTextColor, customTextValue, appPreferences.customTextColor]
+                ];
+                fields.forEach(function(entry) {
+                    if (entry[0]) entry[0].value = entry[2];
+                    if (entry[1]) entry[1].textContent = entry[2].toUpperCase();
+                });
             }
 
             function applyTheme(name) {
                 appPreferences.theme = name;
                 document.documentElement.setAttribute('data-theme', name);
+                if (name === 'custom') setCustomCssVariables();
+                else clearCustomCssVariables();
+
                 themeButtons.forEach(function(button) {
                     var active = button.getAttribute('data-theme-choice') === name;
                     button.classList.toggle('active', active);
                     button.setAttribute('aria-pressed', active ? 'true' : 'false');
                 });
 
+                syncCustomEditor();
+                updateCustomBrandText();
                 var themeMeta = document.querySelector('meta[name="theme-color"]');
                 if (themeMeta) themeMeta.setAttribute('content', themeColorFor(name));
             }
@@ -2182,6 +2764,7 @@
                 soundVolume.value = Math.round(appPreferences.volume * 100);
                 soundVolumeValue.textContent = Math.round(appPreferences.volume * 100) + '%';
                 applyTheme(appPreferences.theme);
+                loadCustomLogo();
                 appVersionLabel.textContent = APP_VERSION;
                 updateNetworkStatus();
             }
@@ -2244,6 +2827,81 @@
                 });
             });
 
+            function normalizeHex(value, fallback) {
+                value = String(value || '').toLowerCase();
+                return /^#[0-9a-f]{6}$/.test(value) ? value : fallback;
+            }
+
+            function bindCustomColor(input, output, preferenceKey) {
+                if (!input) return;
+                input.addEventListener('input', function() {
+                    appPreferences[preferenceKey] = normalizeHex(this.value, DEFAULT_APP_PREFERENCES[preferenceKey]);
+                    if (output) output.textContent = appPreferences[preferenceKey].toUpperCase();
+                    if (appPreferences.theme !== 'custom') applyTheme('custom');
+                    else setCustomCssVariables();
+                    var themeMeta = document.querySelector('meta[name="theme-color"]');
+                    if (themeMeta) themeMeta.setAttribute('content', themeColorFor('custom'));
+                    saveAppPreferences();
+                });
+            }
+
+            bindCustomColor(customBackgroundColor, customBackgroundValue, 'customBackground');
+            bindCustomColor(customIconColor, customIconValue, 'customIconColor');
+            bindCustomColor(customAccentColor, customAccentValue, 'customAccent');
+            bindCustomColor(customTextColor, customTextValue, 'customTextColor');
+
+            if (customBrandName) {
+                customBrandName.addEventListener('input', function() {
+                    appPreferences.customBrandName = String(this.value || '').trimStart().slice(0, 20) || 'TIMER';
+                    if (appPreferences.theme !== 'custom') applyTheme('custom');
+                    updateCustomBrandText();
+                    saveAppPreferences();
+                });
+            }
+
+            if (customLogoInput) {
+                customLogoInput.addEventListener('change', function() {
+                    var file = this.files && this.files[0];
+                    this.value = '';
+                    if (!file) return;
+                    var allowed = ['image/png','image/jpeg','image/webp','image/svg+xml'];
+                    if (allowed.indexOf(file.type) === -1) {
+                        alert('Formato non supportato. Usa PNG, JPEG, WebP o SVG.');
+                        return;
+                    }
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('Il logo supera il limite di 2 MB.');
+                        return;
+                    }
+                    saveCustomLogoBlob(file).then(function() {
+                        applyCustomLogoBlob(file);
+                        if (appPreferences.theme !== 'custom') applyTheme('custom');
+                    }).catch(function() {
+                        alert('Non è stato possibile salvare il logo su questo dispositivo.');
+                    });
+                });
+            }
+
+            if (btnRemoveCustomLogo) {
+                btnRemoveCustomLogo.addEventListener('click', function() {
+                    deleteCustomLogoBlob().then(function() { applyCustomLogoBlob(null); });
+                });
+            }
+
+            if (btnResetCustomTheme) {
+                btnResetCustomTheme.addEventListener('click', function() {
+                    if (!confirm('Ripristinare nome, logo e colori del tema personalizzato?')) return;
+                    appPreferences.customBrandName = DEFAULT_APP_PREFERENCES.customBrandName;
+                    appPreferences.customBackground = DEFAULT_APP_PREFERENCES.customBackground;
+                    appPreferences.customIconColor = DEFAULT_APP_PREFERENCES.customIconColor;
+                    appPreferences.customAccent = DEFAULT_APP_PREFERENCES.customAccent;
+                    appPreferences.customTextColor = DEFAULT_APP_PREFERENCES.customTextColor;
+                    deleteCustomLogoBlob().then(function() { applyCustomLogoBlob(null); });
+                    applyTheme('custom');
+                    saveAppPreferences();
+                });
+            }
+
             btnPreviewSound.addEventListener('click', previewSelectedSound);
             btnPreviewEndAlert.addEventListener('click', previewEndAlert);
 
@@ -2253,6 +2911,7 @@
                 tickEnabled = false;
                 saveAppPreferences();
                 try { localStorage.removeItem('pt_timer_tick'); } catch (e) {}
+                deleteCustomLogoBlob().then(function() { applyCustomLogoBlob(null); });
                 applyAppPreferencesToUI();
                 loadTickState();
                 stopTick();
@@ -2404,12 +3063,29 @@
 
             librarySearchInput.addEventListener('input', renderLibraryItems);
 
-            function setControlButton(button, symbol, label) {
+            var CONTROL_ICONS = {
+                play: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M10 6.7c0-1.35 1.47-2.18 2.62-1.47l13.2 8.16a3.06 3.06 0 0 1 0 5.22l-13.2 8.16A1.72 1.72 0 0 1 10 25.3V6.7z"/></svg>',
+                pause: '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="5" width="7" height="22" rx="1.6"/><rect x="18" y="5" width="7" height="22" rx="1.6"/></svg>',
+                stop: '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="6" width="20" height="20" rx="2"/></svg>',
+                rewind: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M15.3 6.5v19L3.8 16 15.3 6.5z"/><path d="M28.2 6.5v19L16.7 16 28.2 6.5z"/></svg>',
+                forward: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3.8 6.5v19L15.3 16 3.8 6.5z"/><path d="M16.7 6.5v19L28.2 16 16.7 6.5z"/></svg>'
+            };
+
+            function setControlButton(button, iconName, label) {
                 if (!button) return;
                 var symbolNode = button.querySelector('.control-symbol');
                 var labelNode = button.querySelector('.control-label');
-                if (symbolNode) symbolNode.textContent = symbol;
+                if (symbolNode) {
+                    symbolNode.dataset.icon = iconName;
+                    symbolNode.innerHTML = CONTROL_ICONS[iconName] || CONTROL_ICONS.play;
+                }
                 if (labelNode) labelNode.textContent = label;
+            }
+
+            function initializeTransportIcons() {
+                setControlButton(btnSkipBack, 'rewind', 'INDIETRO');
+                setControlButton(btnStop, 'stop', 'STOP');
+                setControlButton(btnSkipForward, 'forward', 'AVANTI');
             }
 
             var PHASE_ICONS = {
@@ -2458,21 +3134,52 @@
                 summaryTotal.textContent = formatCompactTime(calculateTotalDuration());
             }
 
-            // UPDATE UI
+            // TIMELINE SESSIONI: lavoro, recupero ed eventuale extra in ordine reale.
+            function buildSessionTimeline() {
+                var sessions = [];
+                var rounds = Math.max(1, Number(timerState.totalRounds || settings.rounds || 1));
+                for (var round = 1; round <= rounds; round++) {
+                    sessions.push({ type:'work', round:round, label:'Lavoro · giro ' + round });
+                    if (round < rounds) {
+                        sessions.push({ type:'rest', round:round, label:'Recupero · dopo giro ' + round });
+                        if (settings.extraEvery > 0 && round % settings.extraEvery === 0) {
+                            sessions.push({ type:'extra', round:round, label:'Giro extra · dopo giro ' + round });
+                        }
+                    }
+                }
+                return sessions;
+            }
+
+            function getCurrentSessionIndex(sessions) {
+                if (timerState.status === 'finished') return sessions.length;
+                if (timerState.status === 'idle' || timerState.status === 'countdown') return -1;
+                for (var i = 0; i < sessions.length; i++) {
+                    if (sessions[i].type === timerState.status && sessions[i].round === timerState.currentRound) return i;
+                }
+                return -1;
+            }
+
             function updateDots() {
-                var total = timerState.totalRounds || 1;
-                var done = timerState.currentRound;
+                var sessions = buildSessionTimeline();
+                var currentIndex = getCurrentSessionIndex(sessions);
                 progressDots.innerHTML = '';
-                for (var i = 1; i <= total; i++) {
+                progressDots.setAttribute('aria-label', 'Avanzamento delle fasi dell’allenamento');
+
+                sessions.forEach(function(session, index) {
                     var dot = document.createElement('span');
-                    dot.className = 'dot';
-                    if (i < done) dot.classList.add('done');
-                    else if (i === done && timerState.status !== 'idle' && timerState.status !== 'finished') {
-                        if (timerState.status === 'extra') dot.classList.add('extra-dot');
-                        else dot.classList.add('current');
+                    dot.className = 'dot phase-' + session.type;
+                    dot.title = session.label;
+                    dot.setAttribute('aria-label', session.label);
+
+                    if (timerState.status === 'finished' || (currentIndex >= 0 && index < currentIndex)) {
+                        dot.classList.add('done');
+                    } else if (index === currentIndex) {
+                        dot.classList.add('current');
+                    } else {
+                        dot.classList.add('future');
                     }
                     progressDots.appendChild(dot);
-                }
+                });
             }
 
             function updateUI() {
@@ -2522,7 +3229,7 @@
                 ringInner.style.stroke = 'url(#gradient-ready)';
                 ringOuter.style.strokeDashoffset = CIRC_OUTER;
                 btnStart.style.display = 'flex';
-                setControlButton(btnStart, '▶', 'PARTI');
+                setControlButton(btnStart, 'play', 'PARTI');
                 btnStart.className = 'ctrl-btn idle';
                 btnPause.style.display = 'none';
                 btnSkipBack.style.display = 'none';
@@ -2756,7 +3463,7 @@
                 ringOuter.style.strokeDashoffset = 0;
                 if (totalDuration > 0) totalElapsed = totalDuration;
                 appDiv.classList.add('phase-finished'); phaseVisual('finished'); nextPhaseInfo();
-                btnStart.style.display = 'flex'; setControlButton(btnStart, '↻', 'RIAVVIA'); btnStart.className = 'ctrl-btn idle';
+                btnStart.style.display = 'flex'; setControlButton(btnStart, 'play', 'RIAVVIA'); btnStart.className = 'ctrl-btn idle';
                 btnPause.style.display = 'none'; btnSkipBack.style.display = 'none'; btnSkipForward.style.display = 'none'; btnStop.style.display = 'none';
                 updateDots(); stopTick();
                 setTimeout(function() { playBeep(523, 200); }, 100);
@@ -2848,7 +3555,7 @@
 
                 if (timerState.isPaused) {
                     timerState.isPaused = false;
-                    setControlButton(btnStart, 'Ⅱ', 'PAUSA'); btnStart.className = 'ctrl-btn running';
+                    setControlButton(btnStart, 'pause', 'PAUSA'); btnStart.className = 'ctrl-btn running';
                     requestWakeLock();
 
                     var s = timerState.status;
@@ -2859,7 +3566,7 @@
                 } else {
                     syncAccurateClock();
                     timerState.isPaused = true;
-                    setControlButton(btnStart, '▶', 'RIPRENDI'); btnStart.className = 'ctrl-btn idle';
+                    setControlButton(btnStart, 'play', 'RIPRENDI'); btnStart.className = 'ctrl-btn idle';
                     stopTimer(false); stopTick(); releaseWakeLock(); updateUI();
                 }
             }
@@ -2912,7 +3619,7 @@
                     if (totalDuration <= 0) totalDuration = 1;
                     totalElapsed = 0; timerState.currentRound = 0; timerState.extraTriggeredThisRound = false;
                     timerState.currentTime = settings.work; timerState.maxTime = settings.work;
-                    setControlButton(btnStart, 'Ⅱ', 'PAUSA'); btnStart.className = 'ctrl-btn running';
+                    setControlButton(btnStart, 'pause', 'PAUSA'); btnStart.className = 'ctrl-btn running';
                     btnSkipBack.style.display = 'none'; btnSkipForward.style.display = 'none'; btnStop.style.display = 'none';
                     requestWakeLock();
                     startCountdown();
@@ -3000,6 +3707,7 @@
             }
 
             // INIT
+            initializeTransportIcons();
             loadAppPreferences();
             applyAppPreferencesToUI();
             loadTickState();

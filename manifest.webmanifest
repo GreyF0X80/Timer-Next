@@ -1,7 +1,7 @@
 {
   "name": "Timer",
   "short_name": "Timer",
-  "description": "Timer offline personalizzabile per allenamenti HIIT, Tabata, forza e cardio.",
+  "description": "Timer offline personalizzabile con branding, suoni e allenamenti HIIT, Tabata, forza e cardio.",
   "lang": "it-IT",
   "id": "./",
   "start_url": "./",
@@ -12,8 +12,8 @@
     "minimal-ui"
   ],
   "orientation": "portrait-primary",
-  "background_color": "#050b14",
-  "theme_color": "#050b14",
+  "background_color": "#0b0d11",
+  "theme_color": "#0b0d11",
   "icons": [
     {
       "src": "./icons/icon-192.png",

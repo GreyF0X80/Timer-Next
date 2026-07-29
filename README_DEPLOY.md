@@ -76,10 +76,43 @@ Versione 1.7.0: header separato menu/impostazioni, layout render, fix controlli.
 - icona Lavoro ridisegnata come manubrio vettoriale più leggibile.
 
 
-## Aggiornamento 1.7.2
+## Aggiornamento 1.7.4
 
 Sostituita e uniformata l'icona Standard/PWA con la versione Classic definitiva: anello esterno blu-ciano, anello interno rosso-arancio e numero 30 bianco. La stessa immagine viene usata nella Home screen, nel manifest e nell'interfaccia del tema Standard.
 
 
-### Correzione 1.7.2
+### Correzione 1.7.4
 Sfondo uniforme su tutta la superficie iOS, comprese safe area, barra superiore, area centrale e bordi del viewport.
+
+
+## Aggiornamento 1.8.0
+
+La timeline a pallini ora rappresenta tutte le fasi reali dell’allenamento:
+- verde = lavoro;
+- arancio = recupero;
+- viola = giro extra.
+
+Le fasi future restano colorate, quella corrente è evidenziata e quelle completate vengono attenuate.
+
+
+## Timer 1.9.0 — Custom Branding
+
+Il tema **Personalizzato** consente di scegliere:
+- nome mostrato nell'intestazione;
+- logo locale (PNG, JPEG, WebP o SVG, massimo 2 MB);
+- colore dello sfondo;
+- colore delle icone superiori;
+- colore di accento;
+- colore del testo del brand.
+
+Il logo viene memorizzato in IndexedDB esclusivamente sul dispositivo. Le altre preferenze sono salvate in localStorage e funzionano offline.
+
+
+## Timer 1.9.1 — selettori Impostazioni
+
+Ripristinata la visualizzazione corretta dei selettori per:
+- suoni degli ultimi 3 secondi;
+- tick durante il lavoro;
+- vibrazione.
+
+Le funzioni e la persistenza locale erano già presenti; il problema riguardava lo stile CSS, rimasto limitato al vecchio menu sinistro.
