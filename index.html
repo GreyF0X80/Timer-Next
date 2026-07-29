@@ -1806,6 +1806,273 @@
             }
         }
 
+
+        /* ==================== V21 WORKOUT BUILDER ==================== */
+        #drawer {
+            width:min(390px,92vw);
+            padding-left:16px;
+            padding-right:16px;
+        }
+        .workout-builder-heading {
+            display:flex;
+            align-items:flex-end;
+            justify-content:space-between;
+            gap:14px;
+            margin:4px 0 14px;
+            padding:0 2px;
+        }
+        .workout-builder-heading > div:first-child strong {
+            display:block;
+            color:#fff;
+            font-size:1.25rem;
+            letter-spacing:1.2px;
+        }
+        .workout-builder-heading > div:first-child small {
+            display:block;
+            color:var(--text-muted);
+            font-size:.7rem;
+            margin-top:2px;
+        }
+        .builder-duration {
+            text-align:right;
+            flex:0 0 auto;
+        }
+        .builder-duration span {
+            display:block;
+            color:var(--primary-cyan);
+            font-size:.58rem;
+            font-weight:750;
+            letter-spacing:1.2px;
+        }
+        .builder-duration strong {
+            display:block;
+            color:#fff;
+            font-size:1.12rem;
+            font-variant-numeric:tabular-nums;
+            line-height:1.1;
+        }
+        .builder-duration small {
+            display:block;
+            color:var(--text-muted);
+            font-size:.58rem;
+            margin-top:2px;
+        }
+        .workout-builder {
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+            padding-bottom:calc(env(safe-area-inset-bottom,0px) + 18px);
+        }
+        .builder-card {
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,.085);
+            border-radius:18px;
+            background:rgba(255,255,255,.045);
+            box-shadow:0 10px 25px rgba(0,0,0,.18);
+        }
+        .builder-card-split {
+            display:grid;
+            grid-template-columns:1fr;
+        }
+        .builder-card-part {
+            position:relative;
+            padding:16px 14px 14px;
+        }
+        .builder-card-part + .builder-card-part {
+            border-top:1px solid rgba(255,255,255,.09);
+        }
+        .builder-card-preparation,
+        .builder-card-rounds {
+            padding:16px 14px 14px;
+        }
+        .builder-card-label,
+        .builder-section-label {
+            text-align:center;
+            font-size:.7rem;
+            font-weight:800;
+            letter-spacing:1.3px;
+            text-transform:uppercase;
+        }
+        .builder-card-preparation .builder-card-label { color:#ff7a1a; }
+        .builder-part-work .builder-card-label { color:#55ef36; }
+        .builder-part-rest .builder-card-label { color:#ff641e; }
+        .builder-card-rounds .builder-card-label { color:#58b9ff; }
+        .builder-part-extra-every .builder-card-label,
+        .builder-part-extra-duration .builder-card-label { color:#e34cf1; }
+
+        .builder-stepper {
+            display:grid;
+            grid-template-columns:56px minmax(80px,1fr) 56px;
+            align-items:center;
+            gap:8px;
+            margin-top:7px;
+        }
+        .builder-step-btn {
+            width:56px;
+            height:50px;
+            border:0;
+            background:transparent;
+            color:#fff;
+            font-size:2rem;
+            font-weight:300;
+            line-height:1;
+            border-radius:14px;
+            cursor:pointer;
+            touch-action:manipulation;
+            transition:background .15s ease,transform .12s ease,color .15s ease;
+        }
+        .builder-step-btn:active {
+            transform:scale(.9);
+            background:rgba(255,255,255,.07);
+            color:var(--primary-cyan);
+        }
+        .builder-value {
+            display:block;
+            text-align:center;
+            color:#fff;
+            font-size:2rem;
+            font-weight:750;
+            line-height:1;
+            letter-spacing:-1px;
+            font-variant-numeric:tabular-nums;
+        }
+        .builder-unit {
+            display:block;
+            text-align:center;
+            margin-top:3px;
+            color:var(--text-muted);
+            font-size:.61rem;
+            text-transform:uppercase;
+            letter-spacing:1px;
+        }
+        .builder-presets,
+        .drawer-save-section {
+            margin-top:4px;
+            padding:13px;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:16px;
+            background:rgba(255,255,255,.03);
+        }
+        .builder-section-label {
+            color:var(--text-muted);
+            margin-bottom:10px;
+        }
+        #drawer #preset-bar {
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:8px;
+            margin:0;
+        }
+        #drawer .preset-btn {
+            min-height:42px;
+            border:1.5px solid rgba(255,255,255,.13);
+            border-radius:13px;
+            background:rgba(255,255,255,.035);
+            color:#fff;
+            font-size:.7rem;
+            font-weight:750;
+            letter-spacing:.8px;
+            padding:0 8px;
+        }
+        #drawer .preset-btn.active {
+            border-color:var(--primary-cyan);
+            background:color-mix(in srgb,var(--primary-cyan) 14%,transparent);
+            color:var(--primary-cyan);
+            box-shadow:0 0 12px color-mix(in srgb,var(--primary-cyan) 25%,transparent);
+        }
+        .drawer-save-section {
+            margin-top:0;
+        }
+        .drawer-save-section input {
+            height:44px;
+            margin:0 0 8px;
+            border-radius:12px;
+            background:rgba(0,0,0,.2);
+        }
+        .btn-save-drawer,
+        #btn-open-library {
+            min-height:44px;
+            border-radius:12px;
+            font-weight:800;
+            letter-spacing:.7px;
+        }
+        #btn-open-library {
+            margin:0;
+            background:rgba(255,255,255,.035);
+            border:1.5px solid var(--primary-cyan);
+            color:var(--primary-cyan);
+        }
+        @media (min-width:700px) {
+            #drawer { width:min(450px,62vw); }
+            .builder-card-split { grid-template-columns:1fr 1fr; }
+            .builder-card-part + .builder-card-part {
+                border-top:0;
+                border-left:1px solid rgba(255,255,255,.09);
+            }
+        }
+        @media (max-height:700px) {
+            .builder-card-part,
+            .builder-card-preparation,
+            .builder-card-rounds { padding-top:12px; padding-bottom:11px; }
+            .builder-stepper { margin-top:4px; }
+            .builder-step-btn { height:42px; }
+            .builder-value { font-size:1.65rem; }
+        }
+
+
+        /* ==================== V22 STABLE LAYOUT + QUIET TIMELINE ==================== */
+        #next-phase {
+            flex: 0 0 auto;
+            min-height: 42px;
+            height: 42px;
+            box-sizing: border-box;
+            transition: opacity .2s ease, border-color .2s ease, background-color .2s ease;
+        }
+        #next-phase.is-empty {
+            min-height: 42px !important;
+            height: 42px !important;
+            padding: 8px 18px !important;
+            margin: clamp(3px,.8vh,8px) auto clamp(5px,1vh,10px) !important;
+            border: 1px solid transparent !important;
+            background: transparent !important;
+            opacity: 0;
+            visibility: hidden;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        #progress-dots-container {
+            min-height: 19px;
+            padding: 5px 0 7px;
+        }
+        #progress-dots {
+            gap: clamp(4px, 1vw, 6px);
+            max-width: min(88%, 560px);
+        }
+        .dot {
+            width: clamp(6px, 1.3vw, 8px);
+            height: clamp(6px, 1.3vw, 8px);
+            box-shadow: none;
+            opacity: .38;
+            filter: saturate(.78) brightness(.84);
+        }
+        .dot.future {
+            opacity: .38;
+            filter: saturate(.76) brightness(.82);
+            box-shadow: none;
+        }
+        .dot.done {
+            opacity: .13;
+            filter: saturate(.35) brightness(.52);
+            box-shadow: none;
+        }
+        .dot.current {
+            opacity: 1;
+            transform: scale(1.32);
+            filter: saturate(1.08) brightness(1.12);
+            box-shadow: 0 0 4px var(--dot-color), 0 0 9px color-mix(in srgb, var(--dot-color) 48%, transparent);
+        }
+
 </style>
 </head>
 <body>
@@ -1850,70 +2117,98 @@
         </div>
 
         <!-- CONFIGURAZIONE ALLENAMENTO -->
-        <div class="drawer-section-title">Allenamento</div>
-        <div id="setup-inside-drawer">
-            <div class="row">
-                <label>⏱ Lavoro</label>
-                <div class="controls">
-                    <button id="dec-work">−</button>
-                    <span id="val-work">30</span>
-                    <button id="inc-work">+</button>
-                </div>
+        <div class="workout-builder-heading">
+            <div>
+                <strong id="builder-title">WORKOUT</strong>
+                <small id="builder-subtitle">Configure your session</small>
             </div>
-            <div class="row">
-                <label>🧘🏻‍♀️ Recupero</label>
-                <div class="controls">
-                    <button id="dec-rest">−</button>
-                    <span id="val-rest">15</span>
-                    <button id="inc-rest">+</button>
-                </div>
-            </div>
-            <div class="row">
-                <label>🔁 Giri</label>
-                <div class="controls">
-                    <button id="dec-rounds">−</button>
-                    <span id="val-rounds">12</span>
-                    <button id="inc-rounds">+</button>
-                </div>
-            </div>
-            <div class="row">
-                <label>🕝 Extra ogni</label>
-                <div class="controls">
-                    <button id="dec-extra-every">−</button>
-                    <span id="val-extra-every">4</span>
-                    <button id="inc-extra-every">+</button>
-                    <span class="extra-label">giri</span>
-                </div>
-            </div>
-            <div class="row">
-                <label>⏳ Durata Extra</label>
-                <div class="controls">
-                    <button id="dec-extra-dur">−</button>
-                    <span id="val-extra-dur">60</span>
-                    <button id="inc-extra-dur">+</button>
-                </div>
-            </div>
-            <!-- SALVA IN LIBRERIA DIRECTLY FROM DRAWER -->
-            <div class="drawer-save-section">
-                <input type="text" id="drawer-save-name" placeholder="Nome workout (es. Gambe)" maxlength="25">
-                <button id="btn-save-drawer" class="btn-save-drawer">💾 SALVA IN LIBRERIA</button>
+            <div class="builder-duration">
+                <span id="builder-duration-label">DURATION</span>
+                <strong id="builder-total-duration">10:45</strong>
+                <small id="builder-preparation-note">+ 3 s preparation</small>
             </div>
         </div>
 
-        <!-- PRESET STANDARD -->
-        <div id="preset-bar">
-            <div class="preset-btn" data-preset="hiit">🔥 HIIT</div>
-            <div class="preset-btn" data-preset="tabata">⚡ TABATA</div>
-            <div class="preset-btn" data-preset="forza">💪🏼 FORZA</div>
-            <div class="preset-btn" data-preset="cardio">🫀 CARDIO</div>
-        </div>
+        <div id="setup-inside-drawer" class="workout-builder">
+            <article class="builder-card builder-card-preparation">
+                <div class="builder-card-label" id="label-preparation">PREPARATION</div>
+                <div class="builder-stepper">
+                    <button id="dec-preparation" class="builder-step-btn" type="button" aria-label="Decrease preparation">−</button>
+                    <span id="val-preparation" class="builder-value">3</span>
+                    <button id="inc-preparation" class="builder-step-btn" type="button" aria-label="Increase preparation">+</button>
+                </div>
+            </article>
 
-        <!-- BOTTONE LIBRERIA -->
-        <button id="btn-open-library">📁 Apri Libreria (0)</button>
+            <article class="builder-card builder-card-split">
+                <section class="builder-card-part builder-part-work">
+                    <div class="builder-card-label" id="label-work">WORK</div>
+                    <div class="builder-stepper">
+                        <button id="dec-work" class="builder-step-btn" type="button" aria-label="Decrease work">−</button>
+                        <span id="val-work" class="builder-value">30</span>
+                        <button id="inc-work" class="builder-step-btn" type="button" aria-label="Increase work">+</button>
+                    </div>
+                </section>
+                <section class="builder-card-part builder-part-rest">
+                    <div class="builder-card-label" id="label-rest">REST</div>
+                    <div class="builder-stepper">
+                        <button id="dec-rest" class="builder-step-btn" type="button" aria-label="Decrease rest">−</button>
+                        <span id="val-rest" class="builder-value">15</span>
+                        <button id="inc-rest" class="builder-step-btn" type="button" aria-label="Increase rest">+</button>
+                    </div>
+                </section>
+            </article>
+
+            <article class="builder-card builder-card-rounds">
+                <div class="builder-card-label" id="label-rounds">ROUNDS</div>
+                <div class="builder-stepper">
+                    <button id="dec-rounds" class="builder-step-btn" type="button" aria-label="Decrease rounds">−</button>
+                    <span id="val-rounds" class="builder-value">12</span>
+                    <button id="inc-rounds" class="builder-step-btn" type="button" aria-label="Increase rounds">+</button>
+                </div>
+            </article>
+
+            <article class="builder-card builder-card-split">
+                <section class="builder-card-part builder-part-extra-every">
+                    <div class="builder-card-label" id="label-extra-every">EXTRA EVERY</div>
+                    <div class="builder-stepper">
+                        <button id="dec-extra-every" class="builder-step-btn" type="button" aria-label="Decrease extra frequency">−</button>
+                        <span id="val-extra-every" class="builder-value">4</span>
+                        <button id="inc-extra-every" class="builder-step-btn" type="button" aria-label="Increase extra frequency">+</button>
+                    </div>
+                    <small class="builder-unit" id="unit-rounds">rounds</small>
+                </section>
+                <section class="builder-card-part builder-part-extra-duration">
+                    <div class="builder-card-label" id="label-extra-duration">EXTRA DURATION</div>
+                    <div class="builder-stepper">
+                        <button id="dec-extra-dur" class="builder-step-btn" type="button" aria-label="Decrease extra duration">−</button>
+                        <span id="val-extra-dur" class="builder-value">60</span>
+                        <button id="inc-extra-dur" class="builder-step-btn" type="button" aria-label="Increase extra duration">+</button>
+                    </div>
+                </section>
+            </article>
+
+            <section class="builder-presets">
+                <div class="builder-section-label" id="preset-title">PRESETS</div>
+                <div id="preset-bar">
+                    <button class="preset-btn" type="button" data-preset="hiit">HIIT</button>
+                    <button class="preset-btn" type="button" data-preset="tabata">TABATA</button>
+                    <button class="preset-btn" type="button" data-preset="forza">STRENGTH</button>
+                    <button class="preset-btn" type="button" data-preset="cardio">CARDIO</button>
+                </div>
+            </section>
+
+            <section class="drawer-save-section">
+                <div class="builder-section-label" id="save-workout-title">SAVE WORKOUT</div>
+                <input type="text" id="drawer-save-name" placeholder="Workout name" maxlength="25">
+                <button id="btn-save-drawer" class="btn-save-drawer" type="button">SAVE TO LIBRARY</button>
+            </section>
+
+            <button id="btn-open-library" type="button">OPEN LIBRARY (0)</button>
+        </div>
 
         <!-- IMPOSTAZIONI APP -->
-        <button id="btn-toggle-app-settings" class="drawer-nav-btn legacy-settings-toggle" type="button" aria-expanded="false" aria-controls="app-settings-panel">
-            <span>⚙️ Impostazioni app</span>
+        <button id="btn-toggle-app-settings" class="drawer-nav-btn legacy-settings-toggle" type="button" aria-expanded="false" aria-controls="app-settings-panel" hidden>
+            <span>Settings</span>
             <span class="chevron" aria-hidden="true">⌄</span>
         </button>
 
@@ -2041,11 +2336,27 @@
                 </div>
             </section>
 
+
+            <section class="settings-group" aria-labelledby="settings-language-title">
+                <h3 id="settings-language-title" class="settings-group-title">Language</h3>
+                <div class="settings-field">
+                    <div>
+                        <label for="language-select" id="language-select-label">App language</label>
+                        <small id="language-select-help">Automatic follows the device language</small>
+                    </div>
+                    <select id="language-select" class="settings-select" aria-label="App language">
+                        <option value="auto">Automatic — Device language</option>
+                        <option value="en">English</option>
+                        <option value="it">Italiano</option>
+                    </select>
+                </div>
+            </section>
+
             <section class="settings-group" aria-labelledby="settings-info-title">
                 <h3 id="settings-info-title" class="settings-group-title">Informazioni</h3>
                 <div class="app-info-card">
                     <div class="app-info-line"><span>App</span><strong>Timer</strong></div>
-                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">1.9.1</strong></div>
+                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">2.0.0-rc2</strong></div>
                     <div class="app-info-line"><span>Stato</span><span id="network-status" class="network-status"><span class="network-dot"></span><strong id="network-status-label">Online</strong></span></div>
                     <div class="app-info-line"><span>Copyright</span><strong>© 2026 MC</strong></div>
                 </div>
@@ -2136,7 +2447,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             "use strict";
 
-            var APP_VERSION = '1.9.1';
+            var APP_VERSION = '2.0.0-rc2';
             var PREFERENCES_KEY = 'kp_timer_preferences_v1';
             var DEFAULT_APP_PREFERENCES = {
                 soundEnabled: true,
@@ -2151,7 +2462,8 @@
                 customBackground: '#10141b',
                 customIconColor: '#ffffff',
                 customAccent: '#00dfff',
-                customTextColor: '#ffffff'
+                customTextColor: '#ffffff',
+                language: 'auto'
             };
             var appPreferences = Object.assign({}, DEFAULT_APP_PREFERENCES);
 
@@ -2237,6 +2549,7 @@
             // ==============================
             // 2. RIFERIMENTI DOM
             // ==============================
+            var valPreparation = document.getElementById('val-preparation');
             var valWork = document.getElementById('val-work');
             var valRest = document.getElementById('val-rest');
             var valRounds = document.getElementById('val-rounds');
@@ -2285,6 +2598,7 @@
             var appVersionLabel = document.getElementById('app-version-label');
             var networkStatus = document.getElementById('network-status');
             var networkStatusLabel = document.getElementById('network-status-label');
+            var languageSelect = document.getElementById('language-select');
 
             // DOM tema personalizzato
             var customThemeEditor = document.getElementById('custom-theme-editor');
@@ -2311,20 +2625,22 @@
             var drawerSaveName = document.getElementById('drawer-save-name');
             var btnSaveDrawer = document.getElementById('btn-save-drawer');
             var librarySearchInput = document.getElementById('library-search-input');
+            var builderTotalDuration = document.getElementById('builder-total-duration');
+            var builderPreparationNote = document.getElementById('builder-preparation-note');
 
             var CIRC_OUTER = 289.03;
             var CIRC_INNER = 245.04;
 
             // PRESETS STANDARD
             var PRESETS = {
-                hiit: { work: 30, rest: 15, rounds: 12, extraEvery: 4, extraDur: 60 },
-                tabata: { work: 20, rest: 10, rounds: 8, extraEvery: 0, extraDur: 60 },
-                forza: { work: 45, rest: 90, rounds: 6, extraEvery: 3, extraDur: 90 },
-                cardio: { work: 60, rest: 20, rounds: 10, extraEvery: 5, extraDur: 120 }
+                hiit: { preparation: 3, work: 30, rest: 15, rounds: 12, extraEvery: 4, extraDur: 60 },
+                tabata: { preparation: 3, work: 20, rest: 10, rounds: 8, extraEvery: 0, extraDur: 60 },
+                forza: { preparation: 3, work: 45, rest: 90, rounds: 6, extraEvery: 3, extraDur: 90 },
+                cardio: { preparation: 3, work: 60, rest: 20, rounds: 10, extraEvery: 5, extraDur: 120 }
             };
 
             // STATO GLOBALE
-            var settings = { work: 30, rest: 15, rounds: 12, extraEvery: 4, extraDur: 60 };
+            var settings = { preparation: 3, work: 30, rest: 15, rounds: 12, extraEvery: 4, extraDur: 60 };
             var tickEnabled = false;
             var tickInterval = null;
             var totalDuration = 0;
@@ -2521,6 +2837,24 @@
                 return total;
             }
 
+
+            function formatBuilderDuration(seconds) {
+                seconds = Math.max(0, Math.round(Number(seconds) || 0));
+                var minutes = Math.floor(seconds / 60);
+                var secs = seconds % 60;
+                return minutes + ':' + String(secs).padStart(2, '0');
+            }
+
+            function updateBuilderDuration() {
+                if (builderTotalDuration) builderTotalDuration.textContent = formatBuilderDuration(calculateTotalDuration());
+                if (builderPreparationNote) {
+                    builderPreparationNote.textContent = settings.preparation > 0
+                        ? t('preparation_note', {n: settings.preparation})
+                        : t('preparation') + ': 0';
+                }
+                if (btnOpenLibrary) btnOpenLibrary.textContent = t('open_library') + ' (' + libraryPresets.length + ')';
+            }
+
             // TICK METRONOMO
             function loadTickState() {
                 tickEnabled = appPreferences.tickEnabled === true;
@@ -2571,6 +2905,7 @@
                 if (['digital', 'energy', 'soft', 'retro', 'bell', 'minimal'].indexOf(clean.soundProfile) === -1) clean.soundProfile = 'digital';
                 if (['profile', 'double-bell', 'alarm', 'siren', 'buzzer', 'whistle'].indexOf(clean.endAlertProfile) === -1) clean.endAlertProfile = 'profile';
                 if (['krio', 'standard', 'custom'].indexOf(clean.theme) === -1) clean.theme = 'standard';
+                if (['auto','en','it'].indexOf(clean.language) === -1) clean.language = 'auto';
                 clean.customBrandName = String(clean.customBrandName || 'TIMER').trim().slice(0, 20) || 'TIMER';
                 ['customBackground', 'customIconColor', 'customAccent', 'customTextColor'].forEach(function(key) {
                     if (!/^#[0-9a-f]{6}$/i.test(String(clean[key] || ''))) clean[key] = DEFAULT_APP_PREFERENCES[key];
@@ -2748,6 +3083,202 @@
                 if (themeMeta) themeMeta.setAttribute('content', themeColorFor(name));
             }
 
+
+            var I18N = {
+                en: {
+                    workout:'WORKOUT', configure_session:'Configure your session', duration:'DURATION',
+                    preparation:'PREPARATION', work:'WORK', rest:'REST', rounds:'ROUNDS',
+                    extra_every:'EXTRA EVERY', extra_duration:'EXTRA DURATION', presets:'PRESETS',
+                    save_workout:'SAVE WORKOUT', workout_name:'Workout name', save_library:'SAVE TO LIBRARY',
+                    open_library:'OPEN LIBRARY', preparation_note:'+ {n} s preparation',
+                    settings:'SETTINGS', settings_sub:'Sounds, theme and device',
+                    sounds_feedback:'Sounds and feedback', sounds:'Sounds', sounds_help:'Phase and completion signals',
+                    sound_style:'Sound style', sound_style_help:'Choose the character of alerts',
+                    end_alert:'End-of-phase alert', end_alert_help:'Used when work, rest or extra ends',
+                    noisy_title:'Noisy environments:', noisy_help:' Alarm, Siren and Buzzer are intentionally strong. Test them at low volume first.',
+                    volume:'Volume', volume_help:'Applies to all sounds',
+                    last3:'Last 3-second sounds', last3_help:'Warning before a phase changes',
+                    tick:'Tick during work', tick_help:'Metronome every second',
+                    vibration:'Vibration', vibration_help:'When supported by the device',
+                    preview_style:'TEST STYLE', preview_end:'TEST END ALERT',
+                    theme:'Theme', custom:'Custom', name:'Name', max20:'Maximum 20 characters',
+                    logo:'Logo', logo_help:'PNG, JPEG, WebP or SVG · max 2 MB', upload_logo:'UPLOAD LOGO',
+                    background:'Background', top_icons:'Top icons', accent:'Accent', brand_text:'Brand text',
+                    local_note:'Logo and customizations are stored only on this device and remain available offline.',
+                    remove_logo:'REMOVE LOGO', reset_theme:'RESET THEME',
+                    language:'Language', app_language:'App language', language_help:'Automatic follows the device language',
+                    auto_language:'Automatic — Device language',
+                    info:'Information', version:'Version', status:'Status', copyright:'Copyright',
+                    reset_settings:'RESET SETTINGS', online:'Online', offline:'Offline',
+                    library:'Workout Library', search:'Search by name…', empty_library:'No workouts saved in the library.',
+                    no_results:'No workouts found.', load:'LOAD', delete_confirm:'Are you sure you want to delete this workout?',
+                    enter_name:'Enter a workout name!', saved:'Workout "{name}" saved to the library!',
+                    phase_ready:'READY', phase_preparation:'PREPARATION', phase_work:'WORK', phase_rest:'REST',
+                    phase_extra:'EXTRA', phase_finished:'COMPLETED', lap:'ROUND',
+                    start:'START', pause:'PAUSE', resume:'RESUME', restart:'RESTART',
+                    back:'BACK', forward:'NEXT', stop:'STOP',
+                    next_work:'NEXT: WORK', next_rest:'NEXT: REST', next_extra:'NEXT: EXTRA',
+                    last_completion:'FINAL PHASE: COMPLETION', completed:'WORKOUT COMPLETED',
+                    paused_prefix:'PAUSED · ', summary_total:'TOTAL',
+                    rounds_unit:'rounds', extra_disabled:'disabled'
+                },
+                it: {
+                    workout:'ALLENAMENTO', configure_session:'Configura la sessione', duration:'DURATA',
+                    preparation:'PREPARAZIONE', work:'LAVORO', rest:'RECUPERO', rounds:'GIRI',
+                    extra_every:'EXTRA OGNI', extra_duration:'DURATA EXTRA', presets:'PRESET',
+                    save_workout:'SALVA ALLENAMENTO', workout_name:'Nome workout', save_library:'SALVA IN LIBRERIA',
+                    open_library:'APRI LIBRERIA', preparation_note:'+ {n} s preparazione',
+                    settings:'IMPOSTAZIONI', settings_sub:'Suoni, tema e dispositivo',
+                    sounds_feedback:'Suoni e feedback', sounds:'Suoni', sounds_help:'Segnali di fase e completamento',
+                    sound_style:'Stile suono', sound_style_help:'Personalizza il carattere degli avvisi',
+                    end_alert:'Avviso fine fase', end_alert_help:'Usato allo scadere di lavoro, recupero ed extra',
+                    noisy_title:'Ambienti rumorosi:', noisy_help:' Sveglia, Sirena e Buzzer sono volutamente incisivi. Provali iniziando da un volume basso.',
+                    volume:'Volume', volume_help:'Valido per tutti i segnali',
+                    last3:'Suoni ultimi 3 secondi', last3_help:'Avviso prima del cambio fase',
+                    tick:'Tick durante il lavoro', tick_help:'Metronomo ogni secondo',
+                    vibration:'Vibrazione', vibration_help:'Quando supportata dal dispositivo',
+                    preview_style:'PROVA STILE', preview_end:'PROVA FINE FASE',
+                    theme:'Tema', custom:'Personalizzato', name:'Nome', max20:'Massimo 20 caratteri',
+                    logo:'Logo', logo_help:'PNG, JPEG, WebP o SVG · massimo 2 MB', upload_logo:'CARICA LOGO',
+                    background:'Sfondo', top_icons:'Icone superiori', accent:'Accento', brand_text:'Testo brand',
+                    local_note:'Logo e personalizzazioni vengono memorizzati esclusivamente su questo dispositivo e restano disponibili offline.',
+                    remove_logo:'RIMUOVI LOGO', reset_theme:'RIPRISTINA TEMA',
+                    language:'Lingua', app_language:'Lingua app', language_help:'Automatica segue la lingua del dispositivo',
+                    auto_language:'Automatica — Lingua dispositivo',
+                    info:'Informazioni', version:'Versione', status:'Stato', copyright:'Copyright',
+                    reset_settings:'RIPRISTINA IMPOSTAZIONI', online:'Online', offline:'Offline',
+                    library:'Libreria Workout', search:'Cerca per nome…', empty_library:'Nessun allenamento salvato nella libreria.',
+                    no_results:'Nessun allenamento trovato.', load:'CARICA', delete_confirm:'Sei sicuro di voler eliminare questo workout?',
+                    enter_name:'Inserisci un nome per l’allenamento!', saved:'Workout "{name}" salvato in libreria!',
+                    phase_ready:'PRONTO', phase_preparation:'PREPARAZIONE', phase_work:'LAVORO', phase_rest:'RECUPERO',
+                    phase_extra:'GIRO EXTRA', phase_finished:'COMPLETATO', lap:'GIRO',
+                    start:'PARTI', pause:'PAUSA', resume:'RIPRENDI', restart:'RIAVVIA',
+                    back:'INDIETRO', forward:'AVANTI', stop:'STOP',
+                    next_work:'PROSSIMO: LAVORO', next_rest:'PROSSIMO: RECUPERO', next_extra:'PROSSIMO: GIRO EXTRA',
+                    last_completion:'ULTIMA FASE: COMPLETAMENTO', completed:'ALLENAMENTO COMPLETATO',
+                    paused_prefix:'IN PAUSA · ', summary_total:'TOTALE',
+                    rounds_unit:'giri', extra_disabled:'disattivato'
+                }
+            };
+
+            function detectDeviceLanguage() {
+                var languages = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'en'];
+                for (var i = 0; i < languages.length; i++) {
+                    var code = String(languages[i] || '').toLowerCase().split('-')[0];
+                    if (code === 'it' || code === 'en') return code;
+                }
+                return 'en';
+            }
+
+            function resolvedLanguage() {
+                return appPreferences.language === 'auto' ? detectDeviceLanguage() : appPreferences.language;
+            }
+
+            function t(key, vars) {
+                var lang = resolvedLanguage();
+                var value = (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
+                vars = vars || {};
+                return String(value).replace(/\{(\w+)\}/g, function(_, name) {
+                    return Object.prototype.hasOwnProperty.call(vars, name) ? vars[name] : '';
+                });
+            }
+
+            function setText(selector, value) {
+                var node = document.querySelector(selector);
+                if (node) node.textContent = value;
+            }
+
+            function applyLanguage() {
+                var lang = resolvedLanguage();
+                document.documentElement.lang = lang;
+                if (languageSelect) languageSelect.value = appPreferences.language;
+
+                setText('#builder-title', t('workout'));
+                setText('#builder-subtitle', t('configure_session'));
+                setText('#builder-duration-label', t('duration'));
+                setText('#label-preparation', t('preparation'));
+                setText('#label-work', t('work'));
+                setText('#label-rest', t('rest'));
+                setText('#label-rounds', t('rounds'));
+                setText('#label-extra-every', t('extra_every'));
+                setText('#label-extra-duration', t('extra_duration'));
+                setText('#unit-rounds', t('rounds_unit'));
+                setText('#preset-title', t('presets'));
+                setText('#save-workout-title', t('save_workout'));
+                if (drawerSaveName) drawerSaveName.placeholder = t('workout_name');
+                setText('#btn-save-drawer', t('save_library'));
+
+                setText('.settings-drawer-header strong', t('settings'));
+                setText('.settings-drawer-header small', t('settings_sub'));
+                setText('#settings-audio-title', t('sounds_feedback'));
+                setText('label[for="sound-toggle"]', t('sounds'));
+                setText('label[for="sound-toggle"] + small', t('sounds_help'));
+                setText('label[for="sound-profile-select"]', t('sound_style'));
+                setText('label[for="sound-profile-select"] + small', t('sound_style_help'));
+                setText('label[for="end-alert-select"]', t('end_alert'));
+                setText('label[for="end-alert-select"] + small', t('end_alert_help'));
+                var noisy = document.querySelector('.alert-sound-note');
+                if (noisy) noisy.innerHTML = '<strong>' + t('noisy_title') + '</strong>' + t('noisy_help');
+                setText('label[for="sound-volume"]', t('volume'));
+                setText('label[for="sound-volume"] + small', t('volume_help'));
+                setText('label[for="countdown-sound-toggle"]', t('last3'));
+                setText('label[for="countdown-sound-toggle"] + small', t('last3_help'));
+                setText('label[for="tick-toggle"]', t('tick'));
+                setText('label[for="tick-toggle"] + small', t('tick_help'));
+                setText('label[for="vibration-toggle"]', t('vibration'));
+                setText('label[for="vibration-toggle"] + small', t('vibration_help'));
+                setText('#btn-preview-sound', t('preview_style'));
+                setText('#btn-preview-end-alert', t('preview_end'));
+                setText('#settings-theme-title', t('theme'));
+                var customThemeBtn = document.querySelector('[data-theme-choice="custom"] span:last-child');
+                if (customThemeBtn) customThemeBtn.textContent = t('custom');
+                setText('label[for="custom-brand-name"]', t('name'));
+                setText('label[for="custom-brand-name"] + small', t('max20'));
+                setText('label[for="custom-logo-input"]', t('logo'));
+                setText('label[for="custom-logo-input"] + small', t('logo_help'));
+                setText('label.compact-upload', t('upload_logo'));
+                var colorLabels = document.querySelectorAll('.custom-color-control > span');
+                if (colorLabels[0]) colorLabels[0].textContent = t('background');
+                if (colorLabels[1]) colorLabels[1].textContent = t('top_icons');
+                if (colorLabels[2]) colorLabels[2].textContent = t('accent');
+                if (colorLabels[3]) colorLabels[3].textContent = t('brand_text');
+                setText('.custom-storage-note', t('local_note'));
+                setText('#btn-remove-custom-logo', t('remove_logo'));
+                setText('#btn-reset-custom-theme', t('reset_theme'));
+                setText('#settings-language-title', t('language'));
+                setText('#language-select-label', t('app_language'));
+                setText('#language-select-help', t('language_help'));
+                var autoOption = document.querySelector('#language-select option[value="auto"]');
+                if (autoOption) autoOption.textContent = t('auto_language');
+                setText('#settings-info-title', t('info'));
+                var infoLabels = document.querySelectorAll('.app-info-line > span:first-child');
+                if (infoLabels[1]) infoLabels[1].textContent = t('version');
+                if (infoLabels[2]) infoLabels[2].textContent = t('status');
+                if (infoLabels[3]) infoLabels[3].textContent = t('copyright');
+                setText('#btn-reset-app-settings', t('reset_settings'));
+                setText('.modal-header h2', t('library'));
+                if (librarySearchInput) librarySearchInput.placeholder = t('search');
+
+                var summaryLabels = document.querySelectorAll('.summary-label');
+                if (summaryLabels[0]) summaryLabels[0].textContent = t('work');
+                if (summaryLabels[1]) summaryLabels[1].textContent = t('rest');
+                if (summaryLabels[2]) summaryLabels[2].textContent = 'EXTRA';
+                if (summaryLabels[3]) summaryLabels[3].textContent = t('summary_total');
+
+                updateLibraryButtonLabel();
+                updateBuilderDuration();
+                if (timerState.status === 'idle') {
+                    phaseLabel.textContent = t('phase_ready');
+                    roundsInfo.textContent = t('lap') + ' 0 / ' + settings.rounds;
+                    setControlButton(btnStart, 'play', t('start'));
+                } else {
+                    updateUI();
+                }
+                initializeTransportIcons();
+                updateNetworkStatus();
+                renderLibraryItems();
+            }
+
             function updateNetworkStatus() {
                 var online = navigator.onLine;
                 networkStatus.classList.toggle('offline', !online);
@@ -2766,7 +3297,7 @@
                 applyTheme(appPreferences.theme);
                 loadCustomLogo();
                 appVersionLabel.textContent = APP_VERSION;
-                updateNetworkStatus();
+                applyLanguage();
             }
 
             btnToggleAppSettings.addEventListener('click', function() {
@@ -2902,6 +3433,14 @@
                 });
             }
 
+            if (languageSelect) {
+                languageSelect.addEventListener('change', function() {
+                    appPreferences.language = this.value;
+                    saveAppPreferences();
+                    applyLanguage();
+                });
+            }
+
             btnPreviewSound.addEventListener('click', previewSelectedSound);
             btnPreviewEndAlert.addEventListener('click', previewEndAlert);
 
@@ -2946,32 +3485,33 @@
             }
 
             function updateLibraryButtonLabel() {
-                btnOpenLibrary.textContent = '📁 Apri Libreria (' + libraryPresets.length + ')';
+                btnOpenLibrary.textContent = t('open_library') + ' (' + libraryPresets.length + ')';
             }
 
             function addLibraryPreset(name) {
                 if (!name || name.trim() === '') {
-                    alert('Inserisci un nome per l\'allenamento!');
+                    alert(t('enter_name'));
                     return;
                 }
                 var newItem = {
                     id: Date.now(),
                     name: name.trim(),
+                    preparation: Math.max(0, parseInt(valPreparation.textContent, 10) || 0),
                     work: parseInt(valWork.textContent, 10) || 30,
                     rest: parseInt(valRest.textContent, 10) || 15,
                     rounds: parseInt(valRounds.textContent, 10) || 12,
                     extraEvery: parseInt(valExtraEvery.textContent, 10) || 0,
                     extraDur: parseInt(valExtraDur.textContent, 10) || 60,
-                    date: new Date().toLocaleDateString('it-IT')
+                    date: new Date().toLocaleDateString(resolvedLanguage() === 'it' ? 'it-IT' : 'en-GB')
                 };
                 libraryPresets.unshift(newItem);
                 saveLibraryPresets();
                 drawerSaveName.value = '';
-                alert('Workout "' + newItem.name + '" salvato in libreria!');
+                alert(t('saved', {name:newItem.name}));
             }
 
             function deleteLibraryPreset(id) {
-                if (confirm('Sei sicuro di voler eliminare questo workout?')) {
+                if (confirm(t('delete_confirm'))) {
                     libraryPresets = libraryPresets.filter(function(item) { return item.id !== id; });
                     saveLibraryPresets();
                 }
@@ -2981,6 +3521,7 @@
                 var found = libraryPresets.find(function(item) { return item.id === id; });
                 if (!found) return;
 
+                settings.preparation = Number.isFinite(Number(found.preparation)) ? Number(found.preparation) : 3;
                 settings.work = found.work;
                 settings.rest = found.rest;
                 settings.rounds = found.rounds;
@@ -3010,7 +3551,7 @@
 
                 if (filtered.length === 0) {
                     libraryItemsList.innerHTML = '<div class="empty-library-msg">' +
-                        (query ? 'Nessun allenamento trovato.' : 'Nessun allenamento salvato nella libreria.') +
+                        (query ? t('no_results') : t('empty_library')) +
                         '</div>';
                     return;
                 }
@@ -3028,8 +3569,12 @@
 
                     var details = document.createElement('div');
                     details.className = 'library-item-details';
-                    details.innerHTML = '⏱ <span>' + item.work + 's</span> / 🧘🏻‍♀️ <span>' + item.rest + 's</span> | 🔁 <span>' + item.rounds + ' giri</span>' +
-                        (item.extraEvery > 0 ? ' | 🕝 Extra ogni <span>' + item.extraEvery + '</span>' : '');
+                    details.innerHTML =
+                        t('preparation') + ' <span>' + (Number.isFinite(Number(item.preparation)) ? item.preparation : 3) + 's</span> · ' +
+                        t('work') + ' <span>' + item.work + 's</span> · ' +
+                        t('rest') + ' <span>' + item.rest + 's</span> · ' +
+                        t('rounds') + ' <span>' + item.rounds + '</span>' +
+                        (item.extraEvery > 0 ? ' · EXTRA / <span>' + item.extraEvery + '</span>' : '');
 
                     info.appendChild(title);
                     info.appendChild(details);
@@ -3039,7 +3584,7 @@
 
                     var btnLoad = document.createElement('button');
                     btnLoad.className = 'btn-action-load';
-                    btnLoad.textContent = 'CARICA';
+                    btnLoad.textContent = t('load');
                     btnLoad.addEventListener('click', function() { loadLibraryPresetIntoTimer(item.id); });
 
                     var btnDel = document.createElement('button');
@@ -3083,9 +3628,9 @@
             }
 
             function initializeTransportIcons() {
-                setControlButton(btnSkipBack, 'rewind', 'INDIETRO');
-                setControlButton(btnStop, 'stop', 'STOP');
-                setControlButton(btnSkipForward, 'forward', 'AVANTI');
+                setControlButton(btnSkipBack, 'rewind', t('back'));
+                setControlButton(btnStop, 'stop', t('stop'));
+                setControlButton(btnSkipForward, 'forward', t('forward'));
             }
 
             var PHASE_ICONS = {
@@ -3103,18 +3648,42 @@
             function nextPhaseInfo() {
                 var status = timerState.status;
                 var label = '', color = '#aeb8c5';
-                if (status === 'countdown') { label='PROSSIMO: LAVORO'; color='#56ef35'; }
-                else if (status === 'work') {
-                    if (timerState.currentRound >= timerState.totalRounds) { label='ULTIMA FASE: COMPLETAMENTO'; color='#00dfff'; }
-                    else { label='PROSSIMO: RECUPERO'; color='#ff791e'; }
+
+                if (status === 'countdown') {
+                    label = t('next_work');
+                    color = '#56ef35';
+                } else if (status === 'work') {
+                    if (timerState.currentRound >= timerState.totalRounds) {
+                        label = t('last_completion');
+                        color = '#00dfff';
+                    } else {
+                        label = t('next_rest');
+                        color = '#ff791e';
+                    }
                 } else if (status === 'rest') {
-                    var extra = settings.extraEvery > 0 && timerState.currentRound % settings.extraEvery === 0 && timerState.currentRound < timerState.totalRounds && !timerState.extraTriggeredThisRound;
-                    label = extra ? 'PROSSIMO: GIRO EXTRA' : 'PROSSIMO: LAVORO';
+                    var extra = settings.extraEvery > 0 &&
+                        timerState.currentRound % settings.extraEvery === 0 &&
+                        timerState.currentRound < timerState.totalRounds &&
+                        !timerState.extraTriggeredThisRound;
+                    label = extra ? t('next_extra') : t('next_work');
                     color = extra ? '#ee42e6' : '#56ef35';
-                } else if (status === 'extra') { label='PROSSIMO: LAVORO'; color='#56ef35'; }
-                else if (status === 'finished') { label='ALLENAMENTO COMPLETATO'; color='#56ef35'; }
-                if (timerState.isPaused && status !== 'idle' && status !== 'finished') label='IN PAUSA · ' + label;
-                if (nextPhase) { nextPhase.classList.toggle('is-empty', !label); nextPhase.innerHTML = label.replace(/^(PROSSIMO:|ULTIMA FASE:|IN PAUSA ·)/, function(m){return '<span>'+m+'</span>';}).replace(/(LAVORO|RECUPERO|GIRO EXTRA|COMPLETAMENTO|ALLENAMENTO COMPLETATO)/, '<strong>$1</strong>'); nextPhase.style.setProperty('--next-color',color); }
+                } else if (status === 'extra') {
+                    label = t('next_work');
+                    color = '#56ef35';
+                } else if (status === 'finished') {
+                    label = t('completed');
+                    color = '#56ef35';
+                }
+
+                if (timerState.isPaused && status !== 'idle' && status !== 'finished') {
+                    label = t('paused_prefix') + label;
+                }
+
+                if (nextPhase) {
+                    nextPhase.classList.toggle('is-empty', !label);
+                    nextPhase.textContent = label;
+                    nextPhase.style.setProperty('--next-color', color);
+                }
             }
 
             function formatCompactTime(seconds) {
@@ -3184,7 +3753,7 @@
 
             function updateUI() {
                 bigNumber.textContent = Math.ceil(timerState.currentTime);
-                roundsInfo.textContent = 'Giro ' + timerState.currentRound + ' / ' + timerState.totalRounds;
+                roundsInfo.textContent = t('lap') + ' ' + timerState.currentRound + ' / ' + timerState.totalRounds;
                 updateDots();
                 phaseVisual(timerState.status);
                 nextPhaseInfo();
@@ -3222,14 +3791,14 @@
 
             function resetUI() {
                 bigNumber.textContent = settings.work;
-                roundsInfo.textContent = 'Giro 0 / ' + settings.rounds;
-                phaseLabel.textContent = 'PRONTO';
+                roundsInfo.textContent = t('lap') + ' 0 / ' + settings.rounds;
+                phaseLabel.textContent = t('phase_ready');
                 appDiv.classList.remove('phase-work', 'phase-rest', 'phase-rest-warning', 'phase-extra', 'phase-countdown', 'phase-finished');
                 ringInner.style.strokeDashoffset = CIRC_INNER;
                 ringInner.style.stroke = 'url(#gradient-ready)';
                 ringOuter.style.strokeDashoffset = CIRC_OUTER;
                 btnStart.style.display = 'flex';
-                setControlButton(btnStart, 'play', 'PARTI');
+                setControlButton(btnStart, 'play', t('start'));
                 btnStart.className = 'ctrl-btn idle';
                 btnPause.style.display = 'none';
                 btnSkipBack.style.display = 'none';
@@ -3405,11 +3974,21 @@
             function startCountdown(carryMs) {
                 stopTimer(false);
                 carryMs = Math.max(0, Number(carryMs) || 0);
+                if (settings.preparation <= 0) {
+                    startWorkPhase(carryMs);
+                    return;
+                }
                 if (shouldSignalTransition(carryMs)) triggerVibration([100, 100, 100]);
-                timerState.status = 'countdown'; timerState.currentTime = 3; timerState.maxTime = 3;
-                timerState.isPaused = false; phaseLabel.textContent = 'PARTENZA';
-                btnSkipBack.style.display = 'none'; btnSkipForward.style.display = 'none'; btnStop.style.display = 'none';
-                updateUI(); startCountdownInterval(carryMs);
+                timerState.status = 'countdown';
+                timerState.currentTime = settings.preparation;
+                timerState.maxTime = settings.preparation;
+                timerState.isPaused = false;
+                phaseLabel.textContent = t('phase_preparation');
+                btnSkipBack.style.display = 'none';
+                btnSkipForward.style.display = 'none';
+                btnStop.style.display = 'none';
+                updateUI();
+                startCountdownInterval(carryMs);
             }
 
             function startWorkPhase(carryMs) {
@@ -3419,7 +3998,7 @@
                 timerState.status = 'work'; timerState.currentRound += 1;
                 timerState.currentTime = settings.work; timerState.maxTime = settings.work;
                 timerState.isPaused = false; timerState.extraTriggeredThisRound = false;
-                phaseLabel.textContent = 'LAVORO';
+                phaseLabel.textContent = t('phase_work');
                 btnSkipBack.style.display = 'flex';
                 btnSkipForward.style.display = 'flex';
                 btnStop.style.display = 'flex';
@@ -3431,7 +4010,7 @@
                 carryMs = Math.max(0, Number(carryMs) || 0);
                 if (shouldSignalTransition(carryMs)) triggerVibration([100]);
                 timerState.status = 'rest'; timerState.currentTime = settings.rest; timerState.maxTime = settings.rest;
-                timerState.isPaused = false; phaseLabel.textContent = 'RECUPERO';
+                timerState.isPaused = false; phaseLabel.textContent = t('phase_rest');
                 btnSkipBack.style.display = 'flex';
                 btnSkipForward.style.display = 'flex';
                 btnStop.style.display = 'flex';
@@ -3443,7 +4022,7 @@
                 carryMs = Math.max(0, Number(carryMs) || 0);
                 if (shouldSignalTransition(carryMs)) triggerVibration([100, 50, 100]);
                 timerState.status = 'extra'; timerState.currentTime = settings.extraDur; timerState.maxTime = settings.extraDur;
-                timerState.isPaused = false; phaseLabel.textContent = 'EXTRA ATTIVO';
+                timerState.isPaused = false; phaseLabel.textContent = t('phase_extra');
                 btnSkipBack.style.display = 'flex';
                 btnSkipForward.style.display = 'flex';
                 btnStop.style.display = 'flex';
@@ -3457,13 +4036,13 @@
                 releaseWakeLock();
                 triggerVibration([100, 50, 100, 50, 300]);
                 timerState.status = 'finished'; timerState.currentTime = 0;
-                phaseLabel.textContent = 'COMPLETATO'; bigNumber.textContent = '0';
-                roundsInfo.textContent = 'Giro ' + timerState.currentRound + ' / ' + timerState.totalRounds;
+                phaseLabel.textContent = t('phase_finished'); bigNumber.textContent = '0';
+                roundsInfo.textContent = t('lap') + ' ' + timerState.currentRound + ' / ' + timerState.totalRounds;
                 ringInner.style.strokeDashoffset = 0; ringInner.style.stroke = 'var(--work-green)';
                 ringOuter.style.strokeDashoffset = 0;
                 if (totalDuration > 0) totalElapsed = totalDuration;
                 appDiv.classList.add('phase-finished'); phaseVisual('finished'); nextPhaseInfo();
-                btnStart.style.display = 'flex'; setControlButton(btnStart, 'play', 'RIAVVIA'); btnStart.className = 'ctrl-btn idle';
+                btnStart.style.display = 'flex'; setControlButton(btnStart, 'play', t('restart')); btnStart.className = 'ctrl-btn idle';
                 btnPause.style.display = 'none'; btnSkipBack.style.display = 'none'; btnSkipForward.style.display = 'none'; btnStop.style.display = 'none';
                 updateDots(); stopTick();
                 setTimeout(function() { playBeep(523, 200); }, 100);
@@ -3493,7 +4072,7 @@
                         timerState.status = 'rest';
                         timerState.currentTime = settings.rest; timerState.maxTime = settings.rest;
                         timerState.extraTriggeredThisRound = false;
-                        phaseLabel.textContent = 'RECUPERO';
+                        phaseLabel.textContent = t('phase_rest');
                         updateUI(); triggerVibration([100]); stopTick(); startRestInterval();
                     }
                 } else if (s === 'rest' || s === 'extra') {
@@ -3503,7 +4082,7 @@
 
                     timerState.status = 'work'; timerState.currentTime = settings.work; timerState.maxTime = settings.work;
                     timerState.extraTriggeredThisRound = false;
-                    phaseLabel.textContent = 'LAVORO'; updateUI(); triggerVibration([200]); startWorkInterval();
+                    phaseLabel.textContent = t('phase_work'); updateUI(); triggerVibration([200]); startWorkInterval();
                 }
             }
 
@@ -3555,7 +4134,7 @@
 
                 if (timerState.isPaused) {
                     timerState.isPaused = false;
-                    setControlButton(btnStart, 'pause', 'PAUSA'); btnStart.className = 'ctrl-btn running';
+                    setControlButton(btnStart, 'pause', t('pause')); btnStart.className = 'ctrl-btn running';
                     requestWakeLock();
 
                     var s = timerState.status;
@@ -3566,19 +4145,22 @@
                 } else {
                     syncAccurateClock();
                     timerState.isPaused = true;
-                    setControlButton(btnStart, 'play', 'RIPRENDI'); btnStart.className = 'ctrl-btn idle';
+                    setControlButton(btnStart, 'play', t('resume')); btnStart.className = 'ctrl-btn idle';
                     stopTimer(false); stopTick(); releaseWakeLock(); updateUI();
                 }
             }
 
             function syncUIFromSettings() {
+                valPreparation.textContent = settings.preparation;
                 valWork.textContent = settings.work; valRest.textContent = settings.rest;
                 valRounds.textContent = settings.rounds; valExtraEvery.textContent = settings.extraEvery;
                 valExtraDur.textContent = settings.extraDur;
                 updateWorkoutSummary();
+                updateBuilderDuration();
             }
 
             function loadSettingsIntoState() {
+                settings.preparation = Math.max(0, parseInt(valPreparation.textContent, 10) || 0);
                 settings.work = parseInt(valWork.textContent, 10) || 30;
                 settings.rest = parseInt(valRest.textContent, 10) || 15;
                 settings.rounds = parseInt(valRounds.textContent, 10) || 8;
@@ -3587,18 +4169,20 @@
                 timerState.totalRounds = settings.rounds;
                 if (timerState.status === 'idle' || timerState.status === 'finished') {
                     timerState.currentTime = settings.work; timerState.maxTime = settings.work;
-                    bigNumber.textContent = settings.work; roundsInfo.textContent = 'Giro 0 / ' + settings.rounds;
+                    bigNumber.textContent = settings.work; roundsInfo.textContent = t('lap') + ' 0 / ' + settings.rounds;
                     ringInner.style.strokeDashoffset = CIRC_INNER; ringInner.style.stroke = 'url(#gradient-ready)';
-                    ringOuter.style.strokeDashoffset = CIRC_OUTER; phaseLabel.textContent = 'PRONTO';
+                    ringOuter.style.strokeDashoffset = CIRC_OUTER; phaseLabel.textContent = t('phase_ready');
                     appDiv.classList.remove('phase-work', 'phase-rest', 'phase-rest-warning', 'phase-extra', 'phase-countdown', 'phase-finished');
                     updateDots();
                 }
                 updateWorkoutSummary();
+                updateBuilderDuration();
             }
 
             function loadPreset(name) {
                 if (timerState.status !== 'idle' && timerState.status !== 'finished') return;
                 var preset = PRESETS[name]; if (!preset) return;
+                settings.preparation = Number.isFinite(Number(preset.preparation)) ? Number(preset.preparation) : 3;
                 settings.work = preset.work; settings.rest = preset.rest;
                 settings.rounds = preset.rounds; settings.extraEvery = preset.extraEvery;
                 settings.extraDur = preset.extraDur;
@@ -3619,10 +4203,10 @@
                     if (totalDuration <= 0) totalDuration = 1;
                     totalElapsed = 0; timerState.currentRound = 0; timerState.extraTriggeredThisRound = false;
                     timerState.currentTime = settings.work; timerState.maxTime = settings.work;
-                    setControlButton(btnStart, 'pause', 'PAUSA'); btnStart.className = 'ctrl-btn running';
+                    setControlButton(btnStart, 'pause', t('pause')); btnStart.className = 'ctrl-btn running';
                     btnSkipBack.style.display = 'none'; btnSkipForward.style.display = 'none'; btnStop.style.display = 'none';
                     requestWakeLock();
-                    startCountdown();
+                    if (settings.preparation > 0) startCountdown(); else startWorkPhase();
                 } else togglePause();
             }
 
@@ -3634,21 +4218,59 @@
                 if (val < min) val = min; if (val > max) val = max;
                 el.textContent = val;
                 if (timerState.status === 'idle' || timerState.status === 'finished') {
-                    loadSettingsIntoState(); resetUI(); updateUI();
+                    loadSettingsIntoState(); resetUI(); updateUI(); updateBuilderDuration();
                 }
             }
 
-            // EVENTI CONTROLLI IMPOSTAZIONI
-            document.getElementById('dec-work').addEventListener('click', function() { adjustValue(valWork, -1, 3, 300); });
-            document.getElementById('inc-work').addEventListener('click', function() { adjustValue(valWork, 1, 3, 300); });
-            document.getElementById('dec-rest').addEventListener('click', function() { adjustValue(valRest, -1, 1, 300); });
-            document.getElementById('inc-rest').addEventListener('click', function() { adjustValue(valRest, 1, 1, 300); });
-            document.getElementById('dec-rounds').addEventListener('click', function() { adjustValue(valRounds, -1, 1, 99); });
-            document.getElementById('inc-rounds').addEventListener('click', function() { adjustValue(valRounds, 1, 1, 99); });
-            document.getElementById('dec-extra-every').addEventListener('click', function() { adjustValue(valExtraEvery, -1, 0, 99); });
-            document.getElementById('inc-extra-every').addEventListener('click', function() { adjustValue(valExtraEvery, 1, 0, 99); });
-            document.getElementById('dec-extra-dur').addEventListener('click', function() { adjustValue(valExtraDur, -1, 5, 600); });
-            document.getElementById('inc-extra-dur').addEventListener('click', function() { adjustValue(valExtraDur, 1, 5, 600); });
+            // CONTROLLI BUILDER: tap singolo + pressione prolungata.
+            function bindStepper(buttonId, valueNode, delta, min, max) {
+                var button = document.getElementById(buttonId);
+                if (!button) return;
+                var delayTimer = null;
+                var repeatTimer = null;
+                var repeated = false;
+
+                function applyOnce() { adjustValue(valueNode, delta, min, max); }
+                function clearRepeat() {
+                    if (delayTimer) clearTimeout(delayTimer);
+                    if (repeatTimer) clearInterval(repeatTimer);
+                    delayTimer = null;
+                    repeatTimer = null;
+                }
+
+                button.addEventListener('pointerdown', function(event) {
+                    if (isRunning()) return;
+                    repeated = false;
+                    try { button.setPointerCapture(event.pointerId); } catch (e) {}
+                    delayTimer = setTimeout(function() {
+                        repeated = true;
+                        applyOnce();
+                        repeatTimer = setInterval(applyOnce, 115);
+                    }, 420);
+                });
+                button.addEventListener('pointerup', function() {
+                    clearRepeat();
+                    if (!repeated) applyOnce();
+                });
+                button.addEventListener('pointercancel', clearRepeat);
+                button.addEventListener('pointerleave', function(event) {
+                    if (event.buttons) clearRepeat();
+                });
+                button.addEventListener('contextmenu', function(event) { event.preventDefault(); });
+            }
+
+            bindStepper('dec-preparation', valPreparation, -1, 0, 30);
+            bindStepper('inc-preparation', valPreparation, 1, 0, 30);
+            bindStepper('dec-work', valWork, -5, 5, 300);
+            bindStepper('inc-work', valWork, 5, 5, 300);
+            bindStepper('dec-rest', valRest, -5, 0, 300);
+            bindStepper('inc-rest', valRest, 5, 0, 300);
+            bindStepper('dec-rounds', valRounds, -1, 1, 99);
+            bindStepper('inc-rounds', valRounds, 1, 1, 99);
+            bindStepper('dec-extra-every', valExtraEvery, -1, 0, 99);
+            bindStepper('inc-extra-every', valExtraEvery, 1, 0, 99);
+            bindStepper('dec-extra-dur', valExtraDur, -5, 5, 600);
+            bindStepper('inc-extra-dur', valExtraDur, 5, 5, 600);
 
             presetBtns.forEach(function(btn) {
                 btn.addEventListener('click', function() {
@@ -3713,6 +4335,7 @@
             loadTickState();
             loadLibraryPresets();
             loadPreset('hiit');
+            applyLanguage();
         });
     </script>
 </body>

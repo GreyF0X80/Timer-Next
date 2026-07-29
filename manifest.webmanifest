@@ -1,8 +1,8 @@
 {
   "name": "Timer",
   "short_name": "Timer",
-  "description": "Timer offline personalizzabile con branding, suoni e allenamenti HIIT, Tabata, forza e cardio.",
-  "lang": "it-IT",
+  "description": "Offline interval timer with customizable preparation, work, rest, rounds, extra phases, sounds, themes and branding.",
+  "lang": "en",
   "id": "./",
   "start_url": "./",
   "scope": "./",

@@ -116,3 +116,23 @@ Ripristinata la visualizzazione corretta dei selettori per:
 - vibrazione.
 
 Le funzioni e la persistenza locale erano già presenti; il problema riguardava lo stile CSS, rimasto limitato al vecchio menu sinistro.
+
+
+## Timer 2.0.0-rc1 — Workout Builder & Languages
+
+- Menu sinistro ridisegnato con card e stepper grandi.
+- Preparazione regolabile da 0 a 30 secondi, predefinita a 3.
+- Preparazione esclusa dal totale dell'allenamento.
+- Lavoro/recupero a step di 5 secondi, giri e frequenza extra a step di 1.
+- Pressione prolungata su +/− per regolazione continua.
+- Preparazione salvata nei preset personalizzati.
+- Lingua Automatica (dispositivo), English e Italiano.
+- Fallback in inglese per lingue non supportate.
+
+
+## Timer 2.0.0-rc2 — Stable Layout
+
+- Lo spazio della barra “Next/Prossimo” resta sempre riservato, evitando spostamenti al primo avvio.
+- A timer fermo lo slot è invisibile ma mantiene la stessa altezza.
+- Timeline delle fasi più piccola e discreta.
+- Fasi future attenuate, completate quasi spente, corrente evidenziata senza glow eccessivo.
