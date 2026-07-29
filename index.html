@@ -1,0 +1,2902 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="standard">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <!-- Modalità web app / colore delle aree di sistema -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#050b14">
+    <meta name="color-scheme" content="dark">
+
+    <!-- iOS espone navigator.standalone; la classe serve come fallback a display-mode -->
+    <script>
+        (function () {
+            var standalone = (window.navigator.standalone === true) ||
+                (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+            if (standalone) document.documentElement.classList.add('is-standalone');
+        }());
+    </script>
+
+
+
+    <script>
+        /* Applica il tema salvato prima del rendering per evitare lampeggi. */
+        (function () {
+            try {
+                var saved = JSON.parse(localStorage.getItem('kp_timer_preferences_v1') || '{}');
+                if (saved.theme && ['krio', 'standard'].indexOf(saved.theme) !== -1) {
+                    document.documentElement.setAttribute('data-theme', saved.theme);
+                }
+                if (saved.reduceMotion === true) document.documentElement.classList.add('reduce-motion');
+            } catch (e) {}
+        }());
+    </script>
+
+    <title>Timer</title>
+    <meta name="application-name" content="Timer">
+    <meta name="apple-mobile-web-app-title" content="Timer">
+    <meta name="description" content="Timer offline per allenamenti HIIT, Tabata, forza e cardio.">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+    <style>
+        /* ==================== PALETTE TIMER & RESET ==================== */
+        :root {
+            --bg-dark: #050b14;
+            --bg-top: #0d1e30;
+            --bg-card: rgba(15, 30, 46, 0.75);
+            --primary-cyan: #00f0ff;
+            --primary-blue: #0072ff;
+            --glow-cyan: rgba(0, 240, 255, 0.35);
+            --work-green: #38ef7d;
+            --rest-red: #ff4d6d;
+            --warning-yellow: #ffc107;
+            --extra-blue: #00b4d8;
+            --text-main: #ffffff;
+            --text-muted: #8a99ad;
+            --ambient-a: rgba(0, 240, 255, 0.11);
+            --ambient-b: rgba(0, 114, 255, 0.10);
+            --surface-header: rgba(15, 30, 46, 0.86);
+            --surface-drawer: rgba(10, 20, 32, 0.96);
+            --surface-modal: rgba(5, 11, 20, 0.96);
+            color-scheme: dark;
+            background-color: var(--bg-dark);
+        }
+
+
+
+        /* ==================== TEMI PERSONALIZZABILI ==================== */
+
+        html[data-theme="standard"] {
+            --bg-dark: #03070d;
+            --bg-mid: #07111d;
+            --bg-deep: #010307;
+            --bg-card: rgba(8, 16, 27, 0.88);
+            --primary-cyan: #00dfff;
+            --primary-blue: #087ee8;
+            --glow-cyan: rgba(0, 223, 255, 0.32);
+            --ambient-one: rgba(0, 126, 232, 0.14);
+            --ambient-two: rgba(0, 223, 255, 0.08);
+            --surface-tint: rgba(7, 17, 29, 0.92);
+            --surface-border: rgba(72, 154, 214, 0.16);
+        }
+
+        html[data-theme="ice"] {
+            --bg-dark: #02151d;
+            --bg-top: #0a3441;
+            --bg-card: rgba(8, 42, 54, 0.78);
+            --primary-cyan: #6ff7ff;
+            --primary-blue: #00a8d6;
+            --glow-cyan: rgba(111, 247, 255, 0.34);
+            --ambient-a: rgba(111, 247, 255, 0.12);
+            --ambient-b: rgba(0, 168, 214, 0.11);
+            --surface-header: rgba(8, 42, 54, 0.88);
+            --surface-drawer: rgba(4, 30, 39, 0.97);
+            --surface-modal: rgba(2, 21, 29, 0.97);
+        }
+
+        html[data-theme="pulse"] {
+            --bg-dark: #0b0715;
+            --bg-top: #281044;
+            --bg-card: rgba(34, 17, 57, 0.78);
+            --primary-cyan: #d78cff;
+            --primary-blue: #7457ff;
+            --glow-cyan: rgba(199, 111, 255, 0.34);
+            --ambient-a: rgba(215, 140, 255, 0.12);
+            --ambient-b: rgba(116, 87, 255, 0.12);
+            --surface-header: rgba(34, 17, 57, 0.88);
+            --surface-drawer: rgba(23, 12, 39, 0.97);
+            --surface-modal: rgba(11, 7, 21, 0.97);
+        }
+
+        html[data-theme="ember"] {
+            --bg-dark: #150806;
+            --bg-top: #3a170d;
+            --bg-card: rgba(55, 22, 12, 0.78);
+            --primary-cyan: #ffbf69;
+            --primary-blue: #ff5f3b;
+            --glow-cyan: rgba(255, 139, 70, 0.34);
+            --ambient-a: rgba(255, 191, 105, 0.12);
+            --ambient-b: rgba(255, 95, 59, 0.12);
+            --surface-header: rgba(55, 22, 12, 0.88);
+            --surface-drawer: rgba(39, 14, 8, 0.97);
+            --surface-modal: rgba(21, 8, 6, 0.97);
+        }
+
+        html[data-theme="aurora"] {
+            --bg-dark: #03120f;
+            --bg-top: #0b3428;
+            --bg-card: rgba(11, 50, 39, 0.78);
+            --primary-cyan: #63f5b0;
+            --primary-blue: #00bfa6;
+            --glow-cyan: rgba(99, 245, 176, 0.34);
+            --ambient-a: rgba(99, 245, 176, 0.13);
+            --ambient-b: rgba(0, 191, 166, 0.11);
+            --surface-header: rgba(11, 50, 39, 0.88);
+            --surface-drawer: rgba(6, 35, 28, 0.97);
+            --surface-modal: rgba(3, 18, 15, 0.97);
+        }
+
+        html[data-theme="neon"] {
+            --bg-dark: #140619;
+            --bg-top: #3a0d43;
+            --bg-card: rgba(54, 15, 63, 0.78);
+            --primary-cyan: #ff62d7;
+            --primary-blue: #00d9ff;
+            --glow-cyan: rgba(255, 98, 215, 0.34);
+            --ambient-a: rgba(255, 98, 215, 0.13);
+            --ambient-b: rgba(0, 217, 255, 0.11);
+            --surface-header: rgba(54, 15, 63, 0.88);
+            --surface-drawer: rgba(37, 9, 44, 0.97);
+            --surface-modal: rgba(20, 6, 25, 0.97);
+        }
+
+        html.reduce-motion *,
+        html.reduce-motion *::before,
+        html.reduce-motion *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+            transition-duration: 0.001ms !important;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /*
+         * FIX iPhone / Safari / web app:
+         * - il canvas radice è sempre scuro, anche nelle safe area;
+         * - il body non è più position:fixed (può lasciare scoperta l'area Home Indicator);
+         * - in Safari usiamo il viewport dinamico, in standalone 100vh include la safe area.
+         */
+        html {
+            width: 100%;
+            min-height: 100%;
+            background-color: var(--bg-dark);
+            overflow: hidden;
+            overscroll-behavior: none;
+        }
+
+        body {
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100svh;
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 50% 18%, var(--bg-top) 0%, transparent 58%),
+                radial-gradient(circle at 12% 88%, var(--ambient-a) 0%, transparent 42%),
+                radial-gradient(circle at 90% 76%, var(--ambient-b) 0%, transparent 44%),
+                linear-gradient(var(--bg-dark), var(--bg-dark));
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+            overscroll-behavior: none;
+        }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+
+            /* fallback -> viewport piccolo -> viewport dinamico */
+            height: 100vh;
+            height: 100svh;
+            height: 100dvh;
+            min-height: 100vh;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+
+            /* Contenuti dentro le safe area, sfondo esteso fino ai bordi */
+            padding-top: calc(env(safe-area-inset-top, 0px) + 60px);
+            padding-bottom: calc(max(env(safe-area-inset-bottom, 0px), 12px) + 12px);
+            padding-left: max(16px, env(safe-area-inset-left, 0px));
+            padding-right: max(16px, env(safe-area-inset-right, 0px));
+
+            background: transparent;
+            overflow-y: auto;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            position: relative;
+        }
+
+        /* In una web app installata WebKit può sottrarre la safe area a dvh/svh. */
+        @media (display-mode: standalone) {
+            body, #app {
+                min-height: 100vh;
+            }
+
+            #app {
+                height: 100vh;
+            }
+        }
+
+        /* Fallback specifico per le versioni iOS che espongono solo navigator.standalone. */
+        html.is-standalone body,
+        html.is-standalone #app {
+            min-height: 100vh;
+        }
+
+        html.is-standalone #app {
+            height: 100vh;
+        }
+
+        /* ==================== LOGO HEADER (Posizionato sotto il Notch) ==================== */
+        #logo-header {
+            position: fixed;
+            top: calc(env(safe-area-inset-top, 0px) + 10px);
+            left: max(16px, env(safe-area-inset-left, 0px));
+            z-index: 1000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface-header);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 10px var(--glow-cyan);
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        #logo-header:active {
+            transform: scale(0.95);
+        }
+        #logo-header img {
+            height: 28px;
+            width: auto;
+            display: block;
+            transition: filter 0.3s ease, box-shadow 0.3s ease;
+        }
+        #logo-header .brand-logo-krio {
+            filter: brightness(0) invert(1) drop-shadow(0 0 4px var(--primary-cyan));
+        }
+        #logo-header .brand-logo-timer {
+            width: 28px;
+            border-radius: 7px;
+            object-fit: cover;
+            filter: none;
+            box-shadow: 0 0 8px var(--glow-cyan);
+        }
+        #logo-header .brand-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        /* ==================== DRAWER ==================== */
+        #drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 340px;
+            max-width: 85vw;
+            height: 100%;
+            background: var(--surface-drawer);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(0, 240, 255, 0.2);
+            z-index: 1100;
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            padding-top: calc(env(safe-area-inset-top, 0px) + 20px);
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+            padding-left: 20px;
+            padding-right: 20px;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.8);
+            color: var(--text-main);
+        }
+        #drawer.open {
+            transform: translateX(0);
+        }
+
+        #drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+        }
+        #drawer-header .logo-large {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        #drawer-header .logo-large img {
+            height: 38px;
+            width: auto;
+        }
+        #drawer-header .logo-large .brand-logo-krio {
+            filter: brightness(0) invert(1) drop-shadow(0 0 4px var(--primary-cyan));
+        }
+        #drawer-header .logo-large .brand-logo-timer {
+            width: 38px;
+            border-radius: 10px;
+            object-fit: cover;
+            filter: none;
+            box-shadow: 0 0 10px var(--glow-cyan);
+        }
+        #drawer-header .logo-large span {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .brand-logo-timer,
+        .brand-name-timer {
+            display: none !important;
+        }
+
+        html:not([data-theme="krio"]) .brand-logo-krio,
+        html:not([data-theme="krio"]) .brand-name-krio {
+            display: none !important;
+        }
+
+        html:not([data-theme="krio"]) .brand-logo-timer {
+            display: block !important;
+        }
+
+        html:not([data-theme="krio"]) .brand-name-timer {
+            display: inline !important;
+        }
+
+        #drawer-close {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1.2rem;
+            color: var(--primary-cyan);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        #drawer-close:active {
+            transform: scale(0.85);
+        }
+
+        /* ==================== OVERLAY ==================== */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1050;
+            display: none;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+        #overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ==================== IMPOSTAZIONI DENTRO IL DRAWER ==================== */
+        #drawer .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 16px;
+            border-radius: 50px;
+            margin-bottom: 8px;
+        }
+        #drawer .row label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-main);
+            min-width: 50px;
+        }
+        #drawer .row .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #drawer .row .controls button {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: 0.15s ease;
+        }
+        #drawer .row .controls button:active {
+            background: var(--primary-cyan);
+            color: #000;
+            transform: scale(0.9);
+        }
+        #drawer .row .controls span {
+            font-size: 1.05rem;
+            font-weight: 700;
+            min-width: 30px;
+            text-align: center;
+            color: var(--primary-cyan);
+        }
+        #drawer .extra-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            min-width: 25px;
+        }
+
+        #drawer .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 16px;
+            border-radius: 50px;
+            margin-bottom: 8px;
+        }
+        #drawer .toggle-row label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #drawer .switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 22px;
+            cursor: pointer;
+            transition: background 0.3s;
+            touch-action: manipulation;
+            flex-shrink: 0;
+        }
+        #drawer .switch.active {
+            background: linear-gradient(90deg, var(--primary-cyan), var(--primary-blue));
+            box-shadow: 0 0 10px var(--glow-cyan);
+        }
+        #drawer .switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #drawer .switch.active::after {
+            transform: translateX(20px);
+        }
+
+
+
+        /* ==================== NAVIGAZIONE E IMPOSTAZIONI APP ==================== */
+        .drawer-section-title {
+            margin: 2px 2px 10px;
+            color: var(--text-muted);
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+        }
+
+        .drawer-nav-btn {
+            width: 100%;
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 13px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.045);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font: inherit;
+            font-size: 0.86rem;
+            font-weight: 650;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+        }
+        .drawer-nav-btn:active { transform: scale(0.98); }
+        .drawer-nav-btn[aria-expanded="true"] {
+            border-color: rgba(0, 240, 255, 0.35);
+            background: rgba(0, 240, 255, 0.07);
+        }
+        .drawer-nav-btn .chevron {
+            color: var(--primary-cyan);
+            font-size: 1rem;
+            transition: transform 0.25s ease;
+        }
+        .drawer-nav-btn[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+        .app-settings-panel {
+            display: none;
+            margin-top: 9px;
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.2);
+        }
+        .app-settings-panel.open { display: block; }
+
+        .settings-group + .settings-group {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .settings-group-title {
+            margin-bottom: 9px;
+            color: var(--primary-cyan);
+            font-size: 0.72rem;
+            font-weight: 750;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .settings-field,
+        .settings-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            min-height: 42px;
+            padding: 7px 2px;
+        }
+        .settings-field > div:first-child,
+        .settings-toggle-row > div:first-child {
+            flex: 1;
+            min-width: 0;
+        }
+        .settings-field label,
+        .settings-toggle-row label {
+            display: block;
+            color: var(--text-main);
+            font-size: 0.8rem;
+            font-weight: 550;
+        }
+        .settings-field small,
+        .settings-toggle-row small,
+        .settings-help {
+            display: block;
+            margin-top: 2px;
+            color: var(--text-muted);
+            font-size: 0.66rem;
+            line-height: 1.35;
+        }
+
+        .settings-select {
+            width: 150px;
+            max-width: 150px;
+            min-height: 34px;
+            border: 1px solid rgba(0,240,255,0.28);
+            border-radius: 9px;
+            background: rgba(5,11,20,0.85);
+            color: var(--text-main);
+            padding: 5px 28px 5px 9px;
+            font-size: 0.74rem;
+            outline: none;
+        }
+
+        .alert-sound-note {
+            margin-top: 5px;
+            padding: 7px 9px;
+            border-left: 2px solid var(--warning-yellow);
+            border-radius: 0 8px 8px 0;
+            background: rgba(255, 193, 7, 0.055);
+        }
+        .alert-sound-note strong {
+            color: var(--warning-yellow);
+            font-weight: 700;
+        }
+
+        .volume-control {
+            display: grid;
+            grid-template-columns: 1fr 38px;
+            align-items: center;
+            gap: 8px;
+            width: 155px;
+        }
+        .volume-control input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary-cyan);
+        }
+        .volume-control output {
+            color: var(--primary-cyan);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+        .theme-btn {
+            position: relative;
+            min-height: 48px;
+            padding: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 11px;
+            background: rgba(255,255,255,0.035);
+            color: var(--text-main);
+            font: inherit;
+            font-size: 0.72rem;
+            font-weight: 650;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+        }
+        .theme-btn.active {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 12px var(--glow-cyan);
+        }
+        .theme-swatch {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            flex: 0 0 auto;
+            border: 2px solid rgba(255,255,255,0.25);
+        }
+        .theme-swatch.standard { background: linear-gradient(135deg, #061f52, #00e5ff 45%, #ff4c22 70%, #ff9d00); }
+        .theme-swatch.krio { background: linear-gradient(135deg, #00f0ff, #0072ff); }
+        .theme-swatch.ice { background: linear-gradient(135deg, #6ff7ff, #00a8d6); }
+        .theme-swatch.pulse { background: linear-gradient(135deg, #d78cff, #7457ff); }
+        .theme-swatch.ember { background: linear-gradient(135deg, #ffbf69, #ff5f3b); }
+        .theme-swatch.aurora { background: linear-gradient(135deg, #63f5b0, #00bfa6); }
+        .theme-swatch.neon { background: linear-gradient(135deg, #ff62d7, #00d9ff); }
+
+        .settings-action-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 9px;
+        }
+        .settings-action-btn {
+            flex: 1;
+            min-height: 38px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,240,255,0.28);
+            background: rgba(0,240,255,0.08);
+            color: var(--primary-cyan);
+            font: inherit;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .settings-action-btn.danger {
+            border-color: rgba(255,77,109,0.35);
+            background: rgba(255,77,109,0.08);
+            color: var(--rest-red);
+        }
+        .settings-action-btn:active { transform: scale(0.97); }
+
+        .app-info-card {
+            padding: 10px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .app-info-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 4px 0;
+            color: var(--text-muted);
+            font-size: 0.68rem;
+        }
+        .app-info-line strong { color: var(--text-main); font-weight: 650; }
+        .network-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-main);
+        }
+        .network-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--work-green);
+            box-shadow: 0 0 7px rgba(56,239,125,0.6);
+        }
+        .network-status.offline .network-dot {
+            background: var(--warning-yellow);
+            box-shadow: 0 0 7px rgba(255,193,7,0.6);
+        }
+
+        /* SECTION SALVA PRESET DENTRO IL DRAWER */
+        .drawer-save-section {
+            margin-top: 14px;
+            background: rgba(0, 240, 255, 0.03);
+            border: 1px dashed rgba(0, 240, 255, 0.25);
+            border-radius: 14px;
+            padding: 12px;
+        }
+        .drawer-save-section input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 0.8rem;
+            outline: none;
+            margin-bottom: 8px;
+            user-select: text;
+        }
+        .drawer-save-section input:focus {
+            border-color: var(--primary-cyan);
+        }
+        .btn-save-drawer {
+            width: 100%;
+            background: var(--primary-cyan);
+            color: #000;
+            border: none;
+            padding: 8px 0;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .btn-save-drawer:active {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+
+        #drawer #preset-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 16px 0 10px 0;
+        }
+        #drawer .preset-btn {
+            flex: 1 1 40%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-main);
+            padding: 8px 0;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+        }
+        #drawer .preset-btn:active {
+            transform: scale(0.95);
+        }
+        #drawer .preset-btn.active {
+            border-color: var(--primary-cyan);
+            color: #000;
+            background: var(--primary-cyan);
+            box-shadow: 0 0 12px var(--glow-cyan);
+        }
+
+        /* BOTTONE LIBRERIA WORKOUT */
+        #btn-open-library {
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(0, 114, 255, 0.15));
+            border: 1px solid var(--primary-cyan);
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        #btn-open-library:active {
+            transform: scale(0.97);
+            background: rgba(0, 240, 255, 0.25);
+        }
+
+        /* ==================== MODALE LIBRERIA WORKOUT ==================== */
+        #library-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1200;
+            background: var(--surface-modal);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding-top: calc(env(safe-area-inset-top, 0px) + 20px);
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+        #library-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .modal-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-close-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.2rem;
+            color: var(--primary-cyan);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            max-width: 700px;
+            width: 100%;
+            margin: 16px auto 0 auto;
+            padding-right: 4px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .search-box input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+            user-select: text;
+        }
+        .search-box input:focus {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 10px var(--glow-cyan);
+        }
+
+        .library-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .library-item {
+            background: rgba(15, 30, 46, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+        .library-item:hover {
+            border-color: rgba(0, 240, 255, 0.3);
+            background: rgba(15, 30, 46, 0.95);
+        }
+        .library-item-info {
+            flex: 1;
+        }
+        .library-item-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .library-item-details {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .library-item-details span {
+            color: var(--primary-cyan);
+            font-weight: 600;
+        }
+        .library-item-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .btn-action-load {
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .btn-action-load:active {
+            background: var(--primary-cyan);
+            color: #000;
+        }
+        .btn-action-del {
+            background: rgba(255, 77, 109, 0.1);
+            border: 1px solid var(--rest-red);
+            color: var(--rest-red);
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .btn-action-del:active {
+            background: var(--rest-red);
+            color: #fff;
+        }
+        .empty-library-msg {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 30px 0;
+        }
+
+        /* ==================== TIMER DISPLAY — REDESIGN 1.5 ==================== */
+        #timer-display {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 0;
+            position: relative;
+            margin: auto 0;
+        }
+        #phase-heading {
+            width: 100%;
+            text-align: center;
+            z-index: 3;
+            margin: 4px 0 10px;
+        }
+        #phase-label {
+            font-size: clamp(1.05rem, 4.5vw, 1.75rem);
+            font-weight: 750;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            transition: color .2s ease, text-shadow .2s ease;
+        }
+        #rounds-info {
+            margin-top: 2px;
+            font-size: clamp(.7rem, 2.6vw, 1rem);
+            font-weight: 600;
+            color: #b4c0ce;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        #ring-stage {
+            position: relative;
+            width: clamp(245px, 70vw, 430px);
+            aspect-ratio: 1;
+            display: grid;
+            place-items: center;
+            flex: 0 1 auto;
+        }
+        #timer-core {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(1px);
+        }
+        #phase-icon {
+            width: clamp(38px, 10vw, 58px);
+            height: clamp(38px, 10vw, 58px);
+            margin-bottom: 6px;
+            color: var(--text-muted);
+            filter: drop-shadow(0 0 9px currentColor);
+            transition: color .25s ease;
+        }
+        #phase-icon svg { width:100%; height:100%; display:block; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+        #phase-icon { width:clamp(48px,12vw,70px); height:clamp(48px,12vw,70px); display:flex; align-items:center; justify-content:center; }
+        #phase-icon svg { overflow:visible; filter:drop-shadow(0 0 7px currentColor); }
+        #big-number {
+            font-size: clamp(3.1rem, 17vw, 7.4rem);
+            font-weight: 750;
+            font-variant-numeric: tabular-nums;
+            line-height: .95;
+            color: #fff;
+            letter-spacing: -2px;
+            text-align: center;
+            text-shadow: 0 0 18px rgba(255,255,255,.14);
+        }
+        #progress-ring-container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: visible;
+            filter: drop-shadow(0 0 11px rgba(0, 223, 255, .25));
+        }
+        #ring-outer-bg,#ring-outer,#ring-inner-bg,#ring-inner { transition: stroke-dashoffset .15s linear, stroke .3s ease; }
+
+        /* RIEPILOGO A CERCHI */
+        #workout-summary {
+            width: min(100%, 560px);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: clamp(10px, 4vw, 25px);
+            padding: 6px 0 8px;
+            flex-shrink: 0;
+        }
+        .summary-chip { min-width:0; display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:0; box-shadow:none; padding:0; }
+        .summary-ring {
+            width: clamp(43px, 12vw, 59px); height: clamp(43px, 12vw, 59px);
+            border-radius:50%; display:grid; place-items:center; position:relative;
+            background: rgba(4,9,16,.86); box-shadow: 0 0 15px rgba(0,0,0,.45);
+        }
+        .summary-ring::before { content:''; position:absolute; inset:0; border-radius:50%; padding:2px; background:var(--sum-gradient); -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; filter:drop-shadow(0 0 5px var(--sum-glow)); }
+        .summary-value { position:relative; z-index:1; font-size:clamp(.67rem,2.8vw,.84rem); font-weight:750; color:#fff; font-variant-numeric:tabular-nums; white-space:nowrap; }
+        .summary-label { font-size:clamp(.46rem,1.8vw,.58rem); letter-spacing:.7px; color:#8494a8; text-transform:uppercase; white-space:nowrap; }
+        .summary-work { --sum-gradient:linear-gradient(135deg,#075b25,#7cff00); --sum-glow:rgba(57,255,20,.55); }
+        .summary-rest { --sum-gradient:linear-gradient(135deg,#8c1422,#ff9d00); --sum-glow:rgba(255,122,26,.55); }
+        .summary-extra { --sum-gradient:linear-gradient(135deg,#5120aa,#ff3cf0); --sum-glow:rgba(255,60,240,.55); }
+        .summary-total { --sum-gradient:linear-gradient(135deg,#061f52,#00e5ff); --sum-glow:rgba(0,223,255,.55); }
+
+        #next-phase {
+            width:min(100%,520px); min-height:38px; padding:8px 18px; margin:2px 0 7px;
+            border:1px solid rgba(255,255,255,.1); border-radius:999px;
+            display:flex; align-items:center; justify-content:center; gap:6px;
+            background:rgba(5,12,21,.68); color:#9da9b8;
+            font-size:clamp(.64rem,2.3vw,.78rem); letter-spacing:.4px;
+            backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+        }
+        #next-phase strong { color:var(--next-color,#fff); letter-spacing:.7px; }
+
+        /* PALLINI DI AVANZAMENTO */
+        #progress-dots-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 0;
+            flex-shrink: 0;
+            min-height: 24px;
+        }
+        #progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            max-width: 85%;
+        }
+        .dot {
+            width: clamp(7px, 1.5vw, 11px);
+            height: clamp(7px, 1.5vw, 11px);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        .dot.done {
+            background: var(--work-green);
+            box-shadow: 0 0 8px rgba(56, 239, 125, 0.5);
+        }
+        .dot.current {
+            background: var(--warning-yellow);
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+            transform: scale(1.2);
+        }
+        .dot.extra-dot {
+            background: var(--extra-blue);
+            box-shadow: 0 0 8px rgba(0, 180, 216, 0.6);
+            transform: scale(1.2);
+        }
+
+        /* ==================== CONTROLLI CIRCOLARI ==================== */
+        #controls { width:100%; display:flex; align-items:flex-start; justify-content:center; gap:clamp(10px,3.5vw,22px); padding:2px 0 7px; flex-shrink:0; }
+        .ctrl-btn { width:clamp(54px,15vw,72px); height:clamp(54px,15vw,72px); flex:0 0 auto; border-radius:50%; padding:0; border:1.5px solid currentColor; background:rgba(5,12,21,.76); color:#00bfff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; cursor:pointer; touch-action:manipulation; box-shadow:0 0 17px color-mix(in srgb,currentColor 38%,transparent), inset 0 0 15px rgba(255,255,255,.02); transition:transform .15s ease,background .2s ease,box-shadow .2s ease; }
+        .ctrl-btn:active { transform:scale(.92); background:rgba(255,255,255,.1); }
+        .control-symbol { font-size:clamp(1.1rem,5vw,1.55rem); line-height:1; font-weight:700; }
+        .control-label { font-size:clamp(.43rem,1.7vw,.56rem); letter-spacing:.6px; line-height:1; margin-top:3px; }
+        #btn-start { color:#00bfff; }
+        #btn-start.idle { color:#00dfff; }
+        #btn-start.running { color:#00bfff; }
+        #btn-skip-back,#btn-skip-forward { color:#7394b9; display:none; }
+        #btn-stop { color:#ff4055; display:none; }
+        #btn-pause,#btn-skip,#btn-reset { display:none !important; }
+
+        /* ==================== COLORI DINAMICI FASI ==================== */
+        .phase-work #phase-label,.phase-work #phase-icon { color:#56ef35; text-shadow:0 0 18px rgba(57,255,20,.45); }
+        .phase-rest #phase-label,.phase-rest #phase-icon { color:#ff791e; text-shadow:0 0 18px rgba(255,122,26,.45); }
+        .phase-rest-warning #phase-label,.phase-rest-warning #phase-icon { color:#ffad18; text-shadow:0 0 20px rgba(255,157,0,.6); }
+        .phase-extra #phase-label,.phase-extra #phase-icon { color:#ee42e6; text-shadow:0 0 18px rgba(255,60,240,.45); }
+        .phase-countdown #phase-label,.phase-countdown #phase-icon { color:#00dfff; text-shadow:0 0 18px rgba(0,223,255,.45); }
+        .phase-finished #phase-label,.phase-finished #phase-icon { color:#56ef35; text-shadow:0 0 20px rgba(57,255,20,.55); }
+        @media (max-height:740px) {
+            #ring-stage { width:clamp(215px,61vh,350px); }
+            #phase-heading { margin-bottom:4px; }
+            #workout-summary { padding-top:2px; padding-bottom:4px; }
+            #next-phase { min-height:32px; padding:6px 14px; margin-bottom:4px; }
+            .ctrl-btn { width:52px; height:52px; }
+            #progress-dots-container { padding:5px 0; min-height:14px; }
+        }
+
+
+        /* ==================== V10 RENDER LAYOUT ==================== */
+        #app-header {
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: calc(env(safe-area-inset-top, 0px) + 72px);
+            padding: calc(env(safe-area-inset-top, 0px) + 10px) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+            display: grid;
+            grid-template-columns: 48px minmax(0,1fr) 48px;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(2,7,14,.98), rgba(3,10,18,.94));
+            border-bottom: 1px solid rgba(255,255,255,.055);
+            box-shadow: 0 8px 28px rgba(0,0,0,.24);
+        }
+        #logo-header { position: static; inset:auto; padding:0; background:none; border:0; box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none; width:46px; height:46px; border-radius:15px; }
+        .header-action { display:flex; align-items:center; justify-content:center; color:#eaf6ff; background:rgba(255,255,255,.025); border:1px solid rgba(255,255,255,.075); border-radius:15px; width:46px; height:46px; cursor:pointer; touch-action:manipulation; }
+        .header-action:active { transform:scale(.92); background:rgba(0,181,255,.1); }
+        .hamburger-icon { font-size:1.65rem; line-height:1; transform:scaleX(1.08); }
+        .gear-icon { font-size:1.45rem; line-height:1; }
+        #header-brand { min-width:0; display:flex; justify-content:center; align-items:center; gap:10px; pointer-events:none; }
+        #header-brand .brand-logo { width:42px; height:42px; object-fit:contain; border-radius:50%; }
+        #header-brand .brand-logo-timer { border-radius:12px; box-shadow:0 0 14px rgba(0,181,255,.22); }
+        #header-brand .brand-name { font-size:clamp(1.05rem,4.5vw,1.4rem); font-weight:700; letter-spacing:1.8px; white-space:nowrap; }
+        #app { padding-top: calc(env(safe-area-inset-top, 0px) + 82px); }
+        #timer-display { justify-content:flex-start; padding-top:clamp(8px,2vh,18px); }
+        #phase-heading { margin-bottom:clamp(6px,1.3vh,12px); }
+        #phase-label { font-size:clamp(1.1rem,5vw,1.55rem); }
+        #rounds-info { font-size:clamp(.72rem,3vw,.96rem); }
+        #ring-stage { width:clamp(230px,69vw,430px); }
+        #phase-icon { font-size:clamp(2rem,10vw,3.4rem); margin-bottom:clamp(4px,1vh,10px); }
+        #big-number { font-size:clamp(3.35rem,18vw,7.4rem); }
+        #workout-summary { gap:clamp(9px,3.7vw,22px); padding:clamp(8px,1.4vh,14px) 4px clamp(4px,1vh,10px); }
+        .summary-ring { width:clamp(45px,12.5vw,66px); height:clamp(45px,12.5vw,66px); }
+        .summary-label { font-size:clamp(.46rem,2vw,.65rem); }
+        #next-phase { width:min(100%,560px); min-height:42px; margin:clamp(3px,.8vh,8px) auto clamp(5px,1vh,10px); }
+        #next-phase.is-empty { min-height:0; height:0; padding:0; margin:0; border:0; opacity:0; overflow:hidden; }
+        #controls { gap:clamp(10px,3.4vw,20px); padding:clamp(5px,1vh,10px) 0; }
+        .ctrl-btn { width:clamp(60px,16vw,82px); height:clamp(60px,16vw,82px); }
+        .control-symbol { font-size:clamp(1.35rem,6vw,1.9rem); }
+        .control-label { font-size:clamp(.46rem,1.8vw,.61rem); }
+        .legacy-settings-toggle { display:none !important; }
+        .app-settings-panel {
+            display:block;
+            position:fixed;
+            z-index:1120;
+            top:0;
+            right:0;
+            left:auto;
+            width:min(390px,92vw);
+            height:100%;
+            overflow-y:auto;
+            padding:calc(env(safe-area-inset-top,0px) + 18px) 18px calc(env(safe-area-inset-bottom,0px) + 24px);
+            margin:0;
+            border-radius:0;
+            border:0;
+            border-left:1px solid rgba(0,191,255,.16);
+            background:rgba(4,10,18,.975);
+            box-shadow:-18px 0 44px rgba(0,0,0,.7);
+            transform:translateX(105%);
+            transition:transform .3s cubic-bezier(.2,.8,.2,1);
+            -webkit-overflow-scrolling:touch;
+        }
+        .app-settings-panel.open { display:block; transform:translateX(0); visibility:visible; pointer-events:auto; }
+        .app-settings-panel:not(.open) { visibility:hidden; pointer-events:none; }
+        #overlay { z-index:1050; }
+        .app-settings-panel { z-index:1200; }
+        .settings-drawer-header { position:sticky; top:calc(-1 * (env(safe-area-inset-top,0px) + 18px)); z-index:2; display:flex; align-items:center; justify-content:space-between; gap:12px; margin:-1px -4px 18px; padding:12px 4px 14px; background:rgba(4,10,18,.96); border-bottom:1px solid rgba(255,255,255,.08); }
+        .settings-drawer-header strong { display:block; color:#fff; letter-spacing:1.2px; }
+        .settings-drawer-header small { display:block; color:var(--text-muted); margin-top:2px; }
+        #settings-close { width:38px; height:38px; border-radius:50%; color:#00dfff; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); font-size:1.05rem; }
+        @media (min-width:700px) {
+            #app-header { grid-template-columns:56px minmax(0,1fr) 56px; padding-left:max(26px,env(safe-area-inset-left,0px)); padding-right:max(26px,env(safe-area-inset-right,0px)); }
+            .header-action,#logo-header { width:52px; height:52px; }
+            #ring-stage { width:min(45vh,440px); }
+            #app { max-width:760px; }
+        }
+        @media (max-height:700px) {
+            #app-header { height:calc(env(safe-area-inset-top,0px) + 60px); padding-top:calc(env(safe-area-inset-top,0px) + 7px); padding-bottom:7px; }
+            #app { padding-top:calc(env(safe-area-inset-top,0px) + 66px); }
+            .header-action,#logo-header { width:42px; height:42px; }
+            #header-brand .brand-logo { width:36px; height:36px; }
+            #ring-stage { width:clamp(205px,55vh,310px); }
+            #workout-summary { padding-top:2px; padding-bottom:2px; }
+            #progress-dots-container { display:none; }
+            .ctrl-btn { width:54px; height:54px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- HEADER APP: menu allenamento a sinistra, identità al centro, impostazioni a destra -->
+    <header id="app-header" aria-label="Barra superiore Timer">
+        <button id="logo-header" class="header-action" type="button" aria-label="Apri configurazione allenamento">
+            <span class="hamburger-icon" aria-hidden="true">☰</span>
+        </button>
+        <div id="header-brand" aria-label="Timer">
+            <img class="brand-logo brand-logo-krio" src="Logo-Blu.svg" alt="KrioPlanet">
+            <img class="brand-logo brand-logo-timer" src="./icons/icon-192.png" alt="Timer">
+            <span class="brand-name brand-name-krio">KRIOPLANET</span>
+            <span class="brand-name brand-name-timer">TIMER</span>
+        </div>
+        <button id="settings-open" class="header-action" type="button" aria-label="Apri impostazioni app">
+            <span class="gear-icon" aria-hidden="true">⚙</span>
+        </button>
+    </header>
+
+    <!-- OVERLAY -->
+    <div id="overlay"></div>
+
+    <!-- DRAWER -->
+    <div id="drawer">
+        <div id="drawer-header">
+            <div class="logo-large">
+                <img class="brand-logo brand-logo-krio" src="Logo-Blu.svg" alt="KrioPlanet">
+                <img class="brand-logo brand-logo-timer" src="./icons/icon-192.png" alt="Timer">
+                <span class="brand-name-krio">KRIOPLANET</span>
+                <span class="brand-name-timer">TIMER</span>
+            </div>
+            <button id="drawer-close" aria-label="Chiudi menu">✕</button>
+        </div>
+
+        <!-- CONFIGURAZIONE ALLENAMENTO -->
+        <div class="drawer-section-title">Allenamento</div>
+        <div id="setup-inside-drawer">
+            <div class="row">
+                <label>⏱ Lavoro</label>
+                <div class="controls">
+                    <button id="dec-work">−</button>
+                    <span id="val-work">30</span>
+                    <button id="inc-work">+</button>
+                </div>
+            </div>
+            <div class="row">
+                <label>🧘🏻‍♀️ Recupero</label>
+                <div class="controls">
+                    <button id="dec-rest">−</button>
+                    <span id="val-rest">15</span>
+                    <button id="inc-rest">+</button>
+                </div>
+            </div>
+            <div class="row">
+                <label>🔁 Giri</label>
+                <div class="controls">
+                    <button id="dec-rounds">−</button>
+                    <span id="val-rounds">12</span>
+                    <button id="inc-rounds">+</button>
+                </div>
+            </div>
+            <div class="row">
+                <label>🕝 Extra ogni</label>
+                <div class="controls">
+                    <button id="dec-extra-every">−</button>
+                    <span id="val-extra-every">4</span>
+                    <button id="inc-extra-every">+</button>
+                    <span class="extra-label">giri</span>
+                </div>
+            </div>
+            <div class="row">
+                <label>⏳ Durata Extra</label>
+                <div class="controls">
+                    <button id="dec-extra-dur">−</button>
+                    <span id="val-extra-dur">60</span>
+                    <button id="inc-extra-dur">+</button>
+                </div>
+            </div>
+            <!-- SALVA IN LIBRERIA DIRECTLY FROM DRAWER -->
+            <div class="drawer-save-section">
+                <input type="text" id="drawer-save-name" placeholder="Nome workout (es. Gambe)" maxlength="25">
+                <button id="btn-save-drawer" class="btn-save-drawer">💾 SALVA IN LIBRERIA</button>
+            </div>
+        </div>
+
+        <!-- PRESET STANDARD -->
+        <div id="preset-bar">
+            <div class="preset-btn" data-preset="hiit">🔥 HIIT</div>
+            <div class="preset-btn" data-preset="tabata">⚡ TABATA</div>
+            <div class="preset-btn" data-preset="forza">💪🏼 FORZA</div>
+            <div class="preset-btn" data-preset="cardio">🫀 CARDIO</div>
+        </div>
+
+        <!-- BOTTONE LIBRERIA -->
+        <button id="btn-open-library">📁 Apri Libreria (0)</button>
+
+        <!-- IMPOSTAZIONI APP -->
+        <button id="btn-toggle-app-settings" class="drawer-nav-btn legacy-settings-toggle" type="button" aria-expanded="false" aria-controls="app-settings-panel">
+            <span>⚙️ Impostazioni app</span>
+            <span class="chevron" aria-hidden="true">⌄</span>
+        </button>
+
+        <div id="app-settings-panel" class="app-settings-panel" aria-hidden="true">
+            <div class="settings-drawer-header">
+                <div><strong>IMPOSTAZIONI</strong><small>Suoni, tema e dispositivo</small></div>
+                <button id="settings-close" type="button" aria-label="Chiudi impostazioni">✕</button>
+            </div>
+            <section class="settings-group" aria-labelledby="settings-audio-title">
+                <h3 id="settings-audio-title" class="settings-group-title">Suoni e feedback</h3>
+
+                <div class="settings-toggle-row">
+                    <div><label for="sound-toggle">Suoni</label><small>Segnali di fase e completamento</small></div>
+                    <div class="switch active" id="sound-toggle" role="switch" tabindex="0" aria-checked="true" aria-label="Attiva suoni"></div>
+                </div>
+
+                <div class="settings-field">
+                    <div><label for="sound-profile-select">Stile suono</label><small>Personalizza il carattere degli avvisi</small></div>
+                    <select id="sound-profile-select" class="settings-select" aria-label="Stile suono">
+                        <option value="digital">Krio Digital</option>
+                        <option value="energy">Energia</option>
+                        <option value="soft">Morbido</option>
+                        <option value="retro">Retro</option>
+                        <option value="bell">Campana</option>
+                        <option value="minimal">Minimal</option>
+                    </select>
+                </div>
+
+                <div class="settings-field">
+                    <div><label for="end-alert-select">Avviso fine fase</label><small>Segnale usato allo scadere di lavoro, recupero ed extra</small></div>
+                    <select id="end-alert-select" class="settings-select" aria-label="Avviso fine fase">
+                        <option value="profile">Come stile suono</option>
+                        <option value="double-bell">Campana doppia</option>
+                        <option value="alarm">Sveglia</option>
+                        <option value="siren">Sirena</option>
+                        <option value="buzzer">Buzzer industriale</option>
+                        <option value="whistle">Fischietto</option>
+                    </select>
+                </div>
+                <p class="settings-help alert-sound-note"><strong>Ambienti rumorosi:</strong> Sveglia, Sirena e Buzzer sono volutamente molto incisivi. Provali iniziando da un volume basso.</p>
+
+                <div class="settings-field">
+                    <div><label for="sound-volume">Volume</label><small>Valido per tutti i segnali</small></div>
+                    <div class="volume-control">
+                        <input id="sound-volume" type="range" min="0" max="100" step="5" value="65" aria-label="Volume suoni">
+                        <output id="sound-volume-value" for="sound-volume">65%</output>
+                    </div>
+                </div>
+
+                <div class="settings-toggle-row">
+                    <div><label for="countdown-sound-toggle">Suoni ultimi 3 secondi</label><small>Avviso prima del cambio fase</small></div>
+                    <div class="switch active" id="countdown-sound-toggle" role="switch" tabindex="0" aria-checked="true" aria-label="Attiva suoni ultimi 3 secondi"></div>
+                </div>
+
+                <div class="settings-toggle-row">
+                    <div><label for="tick-toggle">Tick durante il lavoro</label><small>Metronomo ogni secondo</small></div>
+                    <div class="switch" id="tick-toggle" role="switch" tabindex="0" aria-checked="false" aria-label="Attiva tick durante il lavoro"></div>
+                </div>
+
+                <div class="settings-toggle-row">
+                    <div><label for="vibration-toggle">Vibrazione</label><small>Quando supportata dal dispositivo</small></div>
+                    <div class="switch active" id="vibration-toggle" role="switch" tabindex="0" aria-checked="true" aria-label="Attiva vibrazione"></div>
+                </div>
+
+                <div class="settings-action-row">
+                    <button id="btn-preview-sound" class="settings-action-btn" type="button">▶ PROVA STILE</button>
+                    <button id="btn-preview-end-alert" class="settings-action-btn" type="button">🔔 PROVA FINE FASE</button>
+                </div>
+            </section>
+
+            <section class="settings-group" aria-labelledby="settings-theme-title">
+                <h3 id="settings-theme-title" class="settings-group-title">Tema</h3>
+                <div class="theme-grid" role="group" aria-label="Selezione tema">
+                    <button class="theme-btn" type="button" data-theme-choice="standard"><span class="theme-swatch standard"></span><span>Standard</span></button>
+                    <button class="theme-btn" type="button" data-theme-choice="krio"><span class="theme-swatch krio"></span><span>KrioPlanet</span></button>
+                </div>
+            </section>
+
+            <section class="settings-group" aria-labelledby="settings-device-title">
+                <h3 id="settings-device-title" class="settings-group-title">Dispositivo</h3>
+                <div class="settings-toggle-row">
+                    <div><label for="wake-lock-toggle">Schermo sempre acceso</label><small>Solo mentre il timer è in esecuzione</small></div>
+                    <div class="switch active" id="wake-lock-toggle" role="switch" tabindex="0" aria-checked="true" aria-label="Mantieni schermo acceso"></div>
+                </div>
+                <div class="settings-toggle-row">
+                    <div><label for="reduce-motion-toggle">Riduci animazioni</label><small>Transizioni più sobrie e minor consumo</small></div>
+                    <div class="switch" id="reduce-motion-toggle" role="switch" tabindex="0" aria-checked="false" aria-label="Riduci animazioni"></div>
+                </div>
+                <p class="settings-help">Le preferenze e i workout restano salvati esclusivamente su questo dispositivo.</p>
+            </section>
+
+            <section class="settings-group" aria-labelledby="settings-info-title">
+                <h3 id="settings-info-title" class="settings-group-title">Informazioni</h3>
+                <div class="app-info-card">
+                    <div class="app-info-line"><span>App</span><strong>Timer</strong></div>
+                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">1.6.1</strong></div>
+                    <div class="app-info-line"><span>Stato</span><span id="network-status" class="network-status"><span class="network-dot"></span><strong id="network-status-label">Online</strong></span></div>
+                    <div class="app-info-line"><span>Copyright</span><strong>© 2026 MC</strong></div>
+                </div>
+                <div class="settings-action-row">
+                    <button id="btn-reset-app-settings" class="settings-action-btn danger" type="button">RIPRISTINA IMPOSTAZIONI</button>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <!-- MODALE LIBRERIA WORKOUT -->
+    <div id="library-modal">
+        <div class="modal-header">
+            <h2>📁 Libreria Workout</h2>
+            <button class="modal-close-btn" id="modal-close">✕</button>
+        </div>
+        <div class="modal-body">
+            <!-- CAMPO DI RICERCA -->
+            <div class="search-box">
+                <input type="text" id="library-search-input" placeholder="🔍 Cerca per nome...">
+            </div>
+
+            <!-- LISTA PRESET PERSONALIZZATI -->
+            <div class="library-list" id="library-items-list">
+                <!-- Generati via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- APP PRINCIPALE -->
+    <div id="app">
+        <!-- TIMER -->
+        <div id="timer-display">
+            <div id="phase-heading">
+                <div id="phase-label">PRONTO</div>
+                <div id="rounds-info">GIRO 0 / 12</div>
+            </div>
+            <div id="ring-stage">
+                <div id="timer-core">
+                    <div id="phase-icon" aria-hidden="true"></div>
+                    <div id="big-number">30</div>
+                </div>
+                <svg id="progress-ring-container" viewBox="-6 -6 112 112" aria-hidden="true">
+                <defs>
+                    <linearGradient id="gradient-total" x1="8" y1="12" x2="95" y2="92" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#061f52"/><stop offset="48%" stop-color="#087ee8"/><stop offset="100%" stop-color="#00e5ff"/></linearGradient>
+                    <linearGradient id="gradient-work" x1="12" y1="10" x2="91" y2="94" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#075b25"/><stop offset="54%" stop-color="#31c95c"/><stop offset="100%" stop-color="#7cff00"/></linearGradient>
+                    <linearGradient id="gradient-rest" x1="10" y1="11" x2="93" y2="92" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#8c1422"/><stop offset="55%" stop-color="#ff4c22"/><stop offset="100%" stop-color="#ff9d00"/></linearGradient>
+                    <linearGradient id="gradient-extra" x1="11" y1="9" x2="92" y2="94" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#5120aa"/><stop offset="52%" stop-color="#bd22dc"/><stop offset="100%" stop-color="#ff3cf0"/></linearGradient>
+                    <linearGradient id="gradient-countdown" x1="10" y1="12" x2="92" y2="90" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#087ee8"/><stop offset="100%" stop-color="#00f0ff"/></linearGradient>
+                    <linearGradient id="gradient-ready" x1="12" y1="10" x2="91" y2="94" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#536273"/><stop offset="100%" stop-color="#9cb0c4"/></linearGradient>
+                </defs>
+                <circle id="ring-outer-bg" cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.055)" stroke-width="5"/>
+                <circle id="ring-outer" cx="50" cy="50" r="46" fill="none" stroke="url(#gradient-total)" stroke-width="5" stroke-linecap="round" stroke-dasharray="289.03" stroke-dashoffset="289.03" transform="rotate(-90 50 50)"/>
+                <circle id="ring-inner-bg" cx="50" cy="50" r="39" fill="none" stroke="rgba(255,255,255,0.035)" stroke-width="5"/>
+                <circle id="ring-inner" cx="50" cy="50" r="39" fill="none" stroke="url(#gradient-ready)" stroke-width="5" stroke-linecap="round" stroke-dasharray="245.04" stroke-dashoffset="245.04" transform="rotate(-90 50 50)"/>
+                </svg>
+            </div>
+        </div>
+
+        <div id="workout-summary" aria-label="Composizione allenamento">
+            <div class="summary-chip summary-work"><div class="summary-ring"><span class="summary-value" id="summary-work">30</span></div><span class="summary-label">Lavoro</span></div>
+            <div class="summary-chip summary-rest"><div class="summary-ring"><span class="summary-value" id="summary-rest">15</span></div><span class="summary-label">Recupero</span></div>
+            <div class="summary-chip summary-extra"><div class="summary-ring"><span class="summary-value" id="summary-extra">1:00</span></div><span class="summary-label">Extra</span></div>
+            <div class="summary-chip summary-total"><div class="summary-ring"><span class="summary-value" id="summary-total">10:48</span></div><span class="summary-label">Totale</span></div>
+        </div>
+
+        <div id="next-phase" aria-live="polite"></div>
+
+        <!-- PALLINI -->
+        <div id="progress-dots-container">
+            <div id="progress-dots"></div>
+        </div>
+
+        <!-- CONTROLLI -->
+        <div id="controls">
+            <button id="btn-skip-back" class="ctrl-btn" aria-label="Fase precedente"><span class="control-symbol">↶</span><span class="control-label">INDIETRO</span></button>
+            <button id="btn-start" class="ctrl-btn idle" aria-label="Avvia"><span class="control-symbol">▶</span><span class="control-label">PARTI</span></button>
+            <button id="btn-stop" class="ctrl-btn" aria-label="Interrompi"><span class="control-symbol">■</span><span class="control-label">STOP</span></button>
+            <button id="btn-skip-forward" class="ctrl-btn" aria-label="Fase successiva"><span class="control-symbol">↷</span><span class="control-label">AVANTI</span></button>
+            <button id="btn-pause" style="display:none;"></button>
+            <button id="btn-skip" style="display:none;"></button>
+            <button id="btn-reset" style="display:none;"></button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            "use strict";
+
+            var APP_VERSION = '1.6.1';
+            var PREFERENCES_KEY = 'kp_timer_preferences_v1';
+            var DEFAULT_APP_PREFERENCES = {
+                soundEnabled: true,
+                soundProfile: 'digital',
+                endAlertProfile: 'profile',
+                volume: 0.65,
+                countdownEnabled: true,
+                vibrationEnabled: true,
+                wakeLockEnabled: true,
+                reduceMotion: false,
+                theme: 'standard',
+                tickEnabled: false
+            };
+            var appPreferences = Object.assign({}, DEFAULT_APP_PREFERENCES);
+
+            function triggerVibration(pattern) {
+                if (!appPreferences.vibrationEnabled) return;
+                if (navigator.vibrate) navigator.vibrate(pattern);
+            }
+
+            // ==============================
+            // 1. DRAWER E MODALE LIBRERIA
+            // ==============================
+            var drawer = document.getElementById('drawer');
+            var overlay = document.getElementById('overlay');
+            var logoBtn = document.getElementById('logo-header');
+            var closeBtn = document.getElementById('drawer-close');
+            var libraryModal = document.getElementById('library-modal');
+            var btnOpenLibrary = document.getElementById('btn-open-library');
+            var modalCloseBtn = document.getElementById('modal-close');
+            var settingsOpenBtn = document.getElementById('settings-open');
+            var settingsCloseBtn = document.getElementById('settings-close');
+
+            function openDrawer() {
+                closeSettingsDrawer(false);
+                drawer.classList.add('open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDrawer(hideOverlay) {
+                drawer.classList.remove('open');
+                if (hideOverlay !== false && !appSettingsPanel.classList.contains('open')) overlay.classList.remove('active');
+                if (!appSettingsPanel.classList.contains('open')) document.body.style.overflow = '';
+            }
+
+            function openSettingsDrawer() {
+                closeDrawer(false);
+                appSettingsPanel.classList.add('open');
+                appSettingsPanel.setAttribute('aria-hidden', 'false');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeSettingsDrawer(hideOverlay) {
+                if (!appSettingsPanel) return;
+                appSettingsPanel.classList.remove('open');
+                appSettingsPanel.setAttribute('aria-hidden', 'true');
+                if (hideOverlay !== false && !drawer.classList.contains('open')) overlay.classList.remove('active');
+                if (!drawer.classList.contains('open')) document.body.style.overflow = '';
+            }
+
+            function openLibraryModal() {
+                renderLibraryItems();
+                libraryModal.classList.add('active');
+            }
+
+            function closeLibraryModal() {
+                libraryModal.classList.remove('active');
+            }
+
+            logoBtn.addEventListener('click', openDrawer);
+            closeBtn.addEventListener('click', function(){ closeDrawer(); });
+            settingsOpenBtn.addEventListener('click', openSettingsDrawer);
+            settingsCloseBtn.addEventListener('click', function(){ closeSettingsDrawer(); });
+            overlay.addEventListener('click', function() {
+                closeDrawer(false);
+                closeSettingsDrawer(false);
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+                closeLibraryModal();
+            });
+
+            btnOpenLibrary.addEventListener('click', openLibraryModal);
+            modalCloseBtn.addEventListener('click', closeLibraryModal);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (libraryModal.classList.contains('active')) closeLibraryModal();
+                    else if (appSettingsPanel.classList.contains('open')) closeSettingsDrawer();
+                    else if (drawer.classList.contains('open')) closeDrawer();
+                }
+            });
+
+            // ==============================
+            // 2. RIFERIMENTI DOM
+            // ==============================
+            var valWork = document.getElementById('val-work');
+            var valRest = document.getElementById('val-rest');
+            var valRounds = document.getElementById('val-rounds');
+            var valExtraEvery = document.getElementById('val-extra-every');
+            var valExtraDur = document.getElementById('val-extra-dur');
+            var bigNumber = document.getElementById('big-number');
+            var phaseLabel = document.getElementById('phase-label');
+            var phaseIcon = document.getElementById('phase-icon');
+            var nextPhase = document.getElementById('next-phase');
+            var roundsInfo = document.getElementById('rounds-info');
+            var ringInner = document.getElementById('ring-inner');
+            var ringOuter = document.getElementById('ring-outer');
+            var progressDots = document.getElementById('progress-dots');
+            var summaryWork = document.getElementById('summary-work');
+            var summaryRest = document.getElementById('summary-rest');
+            var summaryExtra = document.getElementById('summary-extra');
+            var summaryTotal = document.getElementById('summary-total');
+            var appDiv = document.getElementById('app');
+            var btnStart = document.getElementById('btn-start');
+            var btnPause = document.getElementById('btn-pause');
+            var btnSkipBack = document.getElementById('btn-skip-back');
+            var btnSkipForward = document.getElementById('btn-skip-forward');
+            var btnStop = document.getElementById('btn-stop');
+            var presetBtns = document.querySelectorAll('#drawer .preset-btn[data-preset]');
+            var tickToggle = document.getElementById('tick-toggle');
+
+            // DOM Impostazioni app
+            var btnToggleAppSettings = document.getElementById('btn-toggle-app-settings');
+            var appSettingsPanel = document.getElementById('app-settings-panel');
+            // Il pannello impostazioni deve essere figlio diretto del body: un elemento fixed
+            // dentro il drawer trasformato resta vincolato al menu sinistro e può risultare invisibile.
+            if (appSettingsPanel && appSettingsPanel.parentElement !== document.body) {
+                document.body.appendChild(appSettingsPanel);
+            }
+            var soundToggle = document.getElementById('sound-toggle');
+            var soundProfileSelect = document.getElementById('sound-profile-select');
+            var endAlertSelect = document.getElementById('end-alert-select');
+            var soundVolume = document.getElementById('sound-volume');
+            var soundVolumeValue = document.getElementById('sound-volume-value');
+            var countdownSoundToggle = document.getElementById('countdown-sound-toggle');
+            var vibrationToggle = document.getElementById('vibration-toggle');
+            var wakeLockToggle = document.getElementById('wake-lock-toggle');
+            var reduceMotionToggle = document.getElementById('reduce-motion-toggle');
+            var themeButtons = document.querySelectorAll('[data-theme-choice]');
+            var btnPreviewSound = document.getElementById('btn-preview-sound');
+            var btnPreviewEndAlert = document.getElementById('btn-preview-end-alert');
+            var btnResetAppSettings = document.getElementById('btn-reset-app-settings');
+            var appVersionLabel = document.getElementById('app-version-label');
+            var networkStatus = document.getElementById('network-status');
+            var networkStatusLabel = document.getElementById('network-status-label');
+
+            // DOM Libreria Modal & Save Drawer
+            var libraryItemsList = document.getElementById('library-items-list');
+            var drawerSaveName = document.getElementById('drawer-save-name');
+            var btnSaveDrawer = document.getElementById('btn-save-drawer');
+            var librarySearchInput = document.getElementById('library-search-input');
+
+            var CIRC_OUTER = 289.03;
+            var CIRC_INNER = 245.04;
+
+            // PRESETS STANDARD
+            var PRESETS = {
+                hiit: { work: 30, rest: 15, rounds: 12, extraEvery: 4, extraDur: 60 },
+                tabata: { work: 20, rest: 10, rounds: 8, extraEvery: 0, extraDur: 60 },
+                forza: { work: 45, rest: 90, rounds: 6, extraEvery: 3, extraDur: 90 },
+                cardio: { work: 60, rest: 20, rounds: 10, extraEvery: 5, extraDur: 120 }
+            };
+
+            // STATO GLOBALE
+            var settings = { work: 30, rest: 15, rounds: 12, extraEvery: 4, extraDur: 60 };
+            var tickEnabled = false;
+            var tickInterval = null;
+            var totalDuration = 0;
+            var totalElapsed = 0;
+            var lastCountdownSecond = -1;
+
+            var timerState = {
+                status: 'idle',
+                currentRound: 0,
+                totalRounds: settings.rounds,
+                currentTime: settings.work,
+                maxTime: settings.work,
+                timerInterval: null,
+                tickHandler: null,
+                phaseEndAt: 0,
+                phaseRunDuration: 0,
+                phaseElapsedAtStart: 0,
+                isPaused: false,
+                extraTriggeredThisRound: false
+            };
+
+            // AUDIO PERSONALIZZABILE
+            var audioCtx = null;
+            var SOUND_PROFILES = {
+                digital: { oscillator: 'sine',     frequencyScale: 1.00, gainScale: 1.00, attack: 0.012 },
+                energy:  { oscillator: 'square',   frequencyScale: 1.16, gainScale: 0.72, attack: 0.006 },
+                soft:    { oscillator: 'sine',     frequencyScale: 0.82, gainScale: 0.65, attack: 0.025 },
+                retro:   { oscillator: 'triangle', frequencyScale: 1.00, gainScale: 0.82, attack: 0.010 },
+                bell:    { oscillator: 'sine',     frequencyScale: 0.94, gainScale: 0.92, attack: 0.004, harmonic: 2.01 },
+                minimal: { oscillator: 'square',   frequencyScale: 1.30, gainScale: 0.45, attack: 0.002 }
+            };
+
+            var END_ALERT_PATTERNS = {
+                'double-bell': [
+                    { at: 0,   freq: 660, duration: 260, oscillator: 'sine', gain: 0.92, harmonic: 2.01 },
+                    { at: 300, freq: 880, duration: 420, oscillator: 'sine', gain: 1.00, harmonic: 2.00 }
+                ],
+                alarm: [
+                    { at: 0,   freq: 980, duration: 120, oscillator: 'square', gain: 0.78 },
+                    { at: 155, freq: 980, duration: 120, oscillator: 'square', gain: 0.78 },
+                    { at: 310, freq: 980, duration: 120, oscillator: 'square', gain: 0.78 },
+                    { at: 465, freq: 980, duration: 160, oscillator: 'square', gain: 0.82 }
+                ],
+                siren: [
+                    { at: 0,   freq: 520, endFreq: 1180, duration: 430, oscillator: 'sawtooth', gain: 0.62 },
+                    { at: 455, freq: 1180, endFreq: 520, duration: 430, oscillator: 'sawtooth', gain: 0.62 }
+                ],
+                buzzer: [
+                    { at: 0,   freq: 185, duration: 210, oscillator: 'sawtooth', gain: 0.80 },
+                    { at: 245, freq: 185, duration: 210, oscillator: 'sawtooth', gain: 0.80 },
+                    { at: 490, freq: 245, duration: 280, oscillator: 'square', gain: 0.76 }
+                ],
+                whistle: [
+                    { at: 0,   freq: 1750, endFreq: 2200, duration: 180, oscillator: 'sine', gain: 0.74 },
+                    { at: 220, freq: 2050, duration: 260, oscillator: 'sine', gain: 0.78 }
+                ]
+            };
+
+            function initAudio() {
+                if (!audioCtx) {
+                    try { audioCtx = new(window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+                }
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            }
+
+            function playTone(options, forcePreview) {
+                options = options || {};
+                if (!forcePreview && !appPreferences.soundEnabled) return;
+                if (appPreferences.volume <= 0) return;
+
+                try {
+                    initAudio();
+                    if (!audioCtx) return;
+
+                    var now = audioCtx.currentTime;
+                    var duration = Math.max(20, Number(options.duration) || 80);
+                    var oscillatorType = options.oscillator || 'sine';
+                    var baseGain = Number(options.gain);
+                    if (!Number.isFinite(baseGain)) baseGain = 1;
+                    var level = Math.max(0.001, 0.28 * appPreferences.volume * baseGain);
+                    var attack = Math.max(0.002, Number(options.attack) || 0.008);
+
+                    function createOscillator(frequency, oscillatorGain, harmonicRatio) {
+                        var osc = audioCtx.createOscillator();
+                        var gain = audioCtx.createGain();
+                        var startFreq = Math.max(20, frequency * (harmonicRatio || 1));
+                        var targetFreq = Number(options.endFreq);
+                        if (Number.isFinite(targetFreq)) targetFreq = Math.max(20, targetFreq * (harmonicRatio || 1));
+
+                        osc.type = oscillatorType;
+                        osc.frequency.setValueAtTime(startFreq, now);
+                        if (Number.isFinite(targetFreq)) {
+                            osc.frequency.exponentialRampToValueAtTime(targetFreq, now + duration / 1000);
+                        }
+
+                        gain.gain.setValueAtTime(0.001, now);
+                        gain.gain.exponentialRampToValueAtTime(Math.max(0.001, level * oscillatorGain), now + attack);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + duration / 1000);
+
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now);
+                        osc.stop(now + duration / 1000 + 0.03);
+                    }
+
+                    createOscillator(Math.max(20, Number(options.freq) || 800), 1, 1);
+                    if (options.harmonic) createOscillator(Math.max(20, Number(options.freq) || 800), 0.20, Number(options.harmonic));
+                } catch (e) {}
+            }
+
+            function playBeep(freq, duration, forcePreview) {
+                freq = freq || 800;
+                duration = duration || 80;
+                var profile = SOUND_PROFILES[appPreferences.soundProfile] || SOUND_PROFILES.digital;
+                playTone({
+                    freq: freq * profile.frequencyScale,
+                    duration: duration,
+                    oscillator: profile.oscillator,
+                    gain: profile.gainScale,
+                    attack: profile.attack,
+                    harmonic: profile.harmonic
+                }, forcePreview);
+            }
+
+            function playAlertPattern(name, forcePreview) {
+                var pattern = END_ALERT_PATTERNS[name];
+                if (!pattern) {
+                    playBeep(400, 600, forcePreview);
+                    return;
+                }
+                pattern.forEach(function(step) {
+                    setTimeout(function() { playTone(step, forcePreview); }, step.at || 0);
+                });
+            }
+
+            function playEndAlert(forcePreview) {
+                var selected = appPreferences.endAlertProfile || 'profile';
+                if (selected === 'profile') playBeep(400, 600, forcePreview);
+                else playAlertPattern(selected, forcePreview);
+            }
+
+            function playCountdownTick(seconds) {
+                if (!appPreferences.countdownEnabled) return;
+                playBeep(seconds === 1 ? 1000 : 820, 85);
+            }
+            function handleCountdownTick() {
+                if (timerState.isPaused) return;
+                var seconds = Math.ceil(timerState.currentTime);
+                if (seconds >= 1 && seconds <= 3 && seconds !== lastCountdownSecond) {
+                    lastCountdownSecond = seconds;
+                    playCountdownTick(seconds);
+                }
+            }
+            function playGong() { playEndAlert(false); }
+            function playExtraAlert() {
+                playBeep(600, 150);
+                setTimeout(function() { playBeep(900, 150); }, 180);
+            }
+            function playTickMetronome() { playBeep(1200, 30); }
+
+            function previewSelectedSound() {
+                initAudio();
+                playBeep(620, 120, true);
+                setTimeout(function() { playBeep(860, 120, true); }, 160);
+                setTimeout(function() { playBeep(1100, 220, true); }, 320);
+            }
+
+            function previewEndAlert() {
+                initAudio();
+                playEndAlert(true);
+            }
+
+            function calculateTotalDuration() {
+                var work = settings.work;
+                var rest = settings.rest;
+                var rounds = settings.rounds;
+                var extraEvery = settings.extraEvery;
+                var extraDur = settings.extraDur;
+
+                if (rounds <= 0) return 0;
+
+                // 3 secondi di partenza + tutti i lavori.
+                var total = 3 + (work * rounds);
+
+                // Il recupero non viene eseguito dopo l'ultimo giro.
+                total += rest * Math.max(0, rounds - 1);
+
+                // Anche l'extra non viene eseguito dopo l'ultimo giro.
+                if (extraEvery > 0) {
+                    var numExtras = Math.floor((rounds - 1) / extraEvery);
+                    total += extraDur * numExtras;
+                }
+
+                return total;
+            }
+
+            // TICK METRONOMO
+            function loadTickState() {
+                tickEnabled = appPreferences.tickEnabled === true;
+                setSwitchState(tickToggle, tickEnabled);
+            }
+            function saveTickState() {
+                appPreferences.tickEnabled = tickEnabled;
+                saveAppPreferences();
+            }
+            tickToggle.addEventListener('click', function() {
+                tickEnabled = !tickEnabled;
+                setSwitchState(this, tickEnabled);
+                saveTickState();
+                if (timerState.status === 'work' && !timerState.isPaused) startTick();
+                else stopTick();
+            });
+            function startTick() {
+                stopTick();
+                if (!tickEnabled || !appPreferences.soundEnabled || timerState.status !== 'work' || timerState.isPaused) return;
+                tickInterval = setInterval(function() {
+                    if (timerState.status === 'work' && !timerState.isPaused && appPreferences.soundEnabled) playTickMetronome();
+                    else stopTick();
+                }, 1000);
+            }
+            function stopTick() { if (tickInterval) { clearInterval(tickInterval); tickInterval = null; } }
+
+            // ==============================
+            // PREFERENZE APP
+            // ==============================
+            function setSwitchState(element, enabled) {
+                if (!element) return;
+                element.classList.toggle('active', !!enabled);
+                element.setAttribute('aria-checked', enabled ? 'true' : 'false');
+            }
+
+            function bindSwitchKeyboard(element) {
+                if (!element) return;
+                element.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        element.click();
+                    }
+                });
+            }
+
+            function sanitizePreferences(raw) {
+                var clean = Object.assign({}, DEFAULT_APP_PREFERENCES, raw || {});
+                if (['digital', 'energy', 'soft', 'retro', 'bell', 'minimal'].indexOf(clean.soundProfile) === -1) clean.soundProfile = 'digital';
+                if (['profile', 'double-bell', 'alarm', 'siren', 'buzzer', 'whistle'].indexOf(clean.endAlertProfile) === -1) clean.endAlertProfile = 'profile';
+                if (['krio', 'standard'].indexOf(clean.theme) === -1) clean.theme = 'standard';
+                clean.volume = Math.min(1, Math.max(0, Number(clean.volume)));
+                ['soundEnabled', 'countdownEnabled', 'vibrationEnabled', 'wakeLockEnabled', 'reduceMotion', 'tickEnabled'].forEach(function(key) {
+                    clean[key] = clean[key] === true;
+                });
+                return clean;
+            }
+
+            function loadAppPreferences() {
+                try {
+                    var saved = JSON.parse(localStorage.getItem(PREFERENCES_KEY) || '{}');
+                    appPreferences = sanitizePreferences(saved);
+
+                    // Migrazione trasparente dalla vecchia preferenza del tick.
+                    if (!Object.prototype.hasOwnProperty.call(saved, 'tickEnabled')) {
+                        appPreferences.tickEnabled = localStorage.getItem('pt_timer_tick') === 'true';
+                    }
+                } catch (e) {
+                    appPreferences = Object.assign({}, DEFAULT_APP_PREFERENCES);
+                }
+            }
+
+            function saveAppPreferences() {
+                try { localStorage.setItem(PREFERENCES_KEY, JSON.stringify(appPreferences)); } catch (e) {}
+            }
+
+            function themeColorFor(name) {
+                if (name === 'standard') return '#03070d';
+                return {
+                    krio: '#050b14',
+                    ice: '#02151d',
+                    pulse: '#0b0715',
+                    ember: '#150806',
+                    aurora: '#03120f',
+                    neon: '#140619'
+                }[name] || '#050b14';
+            }
+
+            function applyTheme(name) {
+                appPreferences.theme = name;
+                document.documentElement.setAttribute('data-theme', name);
+                themeButtons.forEach(function(button) {
+                    var active = button.getAttribute('data-theme-choice') === name;
+                    button.classList.toggle('active', active);
+                    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+                });
+
+                var themeMeta = document.querySelector('meta[name="theme-color"]');
+                if (themeMeta) themeMeta.setAttribute('content', themeColorFor(name));
+            }
+
+            function updateNetworkStatus() {
+                var online = navigator.onLine;
+                networkStatus.classList.toggle('offline', !online);
+                networkStatusLabel.textContent = online ? 'Online · offline pronto' : 'Offline · cache attiva';
+            }
+
+            function applyAppPreferencesToUI() {
+                setSwitchState(soundToggle, appPreferences.soundEnabled);
+                setSwitchState(countdownSoundToggle, appPreferences.countdownEnabled);
+                setSwitchState(vibrationToggle, appPreferences.vibrationEnabled);
+                setSwitchState(wakeLockToggle, appPreferences.wakeLockEnabled);
+                setSwitchState(reduceMotionToggle, appPreferences.reduceMotion);
+
+                soundProfileSelect.value = appPreferences.soundProfile;
+                endAlertSelect.value = appPreferences.endAlertProfile;
+                soundVolume.value = Math.round(appPreferences.volume * 100);
+                soundVolumeValue.textContent = Math.round(appPreferences.volume * 100) + '%';
+                document.documentElement.classList.toggle('reduce-motion', appPreferences.reduceMotion);
+                applyTheme(appPreferences.theme);
+                appVersionLabel.textContent = APP_VERSION;
+                updateNetworkStatus();
+            }
+
+            btnToggleAppSettings.addEventListener('click', function() {
+                var open = !appSettingsPanel.classList.contains('open');
+                if (open) openSettingsDrawer(); else closeSettingsDrawer();
+                appSettingsPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+                btnToggleAppSettings.setAttribute('aria-expanded', open ? 'true' : 'false');
+                if (open) setTimeout(function() { btnToggleAppSettings.scrollIntoView({ block: 'nearest' }); }, 30);
+            });
+
+            soundToggle.addEventListener('click', function() {
+                appPreferences.soundEnabled = !appPreferences.soundEnabled;
+                setSwitchState(this, appPreferences.soundEnabled);
+                if (!appPreferences.soundEnabled) stopTick();
+                else if (timerState.status === 'work' && !timerState.isPaused) startTick();
+                saveAppPreferences();
+            });
+
+            countdownSoundToggle.addEventListener('click', function() {
+                appPreferences.countdownEnabled = !appPreferences.countdownEnabled;
+                setSwitchState(this, appPreferences.countdownEnabled);
+                saveAppPreferences();
+            });
+
+            vibrationToggle.addEventListener('click', function() {
+                appPreferences.vibrationEnabled = !appPreferences.vibrationEnabled;
+                setSwitchState(this, appPreferences.vibrationEnabled);
+                saveAppPreferences();
+                if (appPreferences.vibrationEnabled) triggerVibration([50]);
+            });
+
+            wakeLockToggle.addEventListener('click', function() {
+                appPreferences.wakeLockEnabled = !appPreferences.wakeLockEnabled;
+                setSwitchState(this, appPreferences.wakeLockEnabled);
+                saveAppPreferences();
+                if (appPreferences.wakeLockEnabled) requestWakeLock();
+                else releaseWakeLock();
+            });
+
+            reduceMotionToggle.addEventListener('click', function() {
+                appPreferences.reduceMotion = !appPreferences.reduceMotion;
+                setSwitchState(this, appPreferences.reduceMotion);
+                document.documentElement.classList.toggle('reduce-motion', appPreferences.reduceMotion);
+                saveAppPreferences();
+            });
+
+            soundProfileSelect.addEventListener('change', function() {
+                appPreferences.soundProfile = this.value;
+                saveAppPreferences();
+                previewSelectedSound();
+            });
+
+            endAlertSelect.addEventListener('change', function() {
+                appPreferences.endAlertProfile = this.value;
+                saveAppPreferences();
+                previewEndAlert();
+            });
+
+            soundVolume.addEventListener('input', function() {
+                appPreferences.volume = Math.min(1, Math.max(0, Number(this.value) / 100));
+                soundVolumeValue.textContent = this.value + '%';
+                saveAppPreferences();
+            });
+
+            soundVolume.addEventListener('change', function() {
+                if (appPreferences.volume > 0) previewSelectedSound();
+            });
+
+            themeButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    applyTheme(button.getAttribute('data-theme-choice'));
+                    saveAppPreferences();
+                });
+            });
+
+            btnPreviewSound.addEventListener('click', previewSelectedSound);
+            btnPreviewEndAlert.addEventListener('click', previewEndAlert);
+
+            btnResetAppSettings.addEventListener('click', function() {
+                if (!confirm('Ripristinare tutte le impostazioni dell’app? I workout salvati non verranno eliminati.')) return;
+                appPreferences = Object.assign({}, DEFAULT_APP_PREFERENCES);
+                tickEnabled = false;
+                saveAppPreferences();
+                try { localStorage.removeItem('pt_timer_tick'); } catch (e) {}
+                applyAppPreferencesToUI();
+                loadTickState();
+                stopTick();
+                if (appPreferences.wakeLockEnabled && isRunning() && !timerState.isPaused) requestWakeLock();
+                previewSelectedSound();
+            });
+
+            [soundToggle, countdownSoundToggle, tickToggle, vibrationToggle, wakeLockToggle, reduceMotionToggle].forEach(bindSwitchKeyboard);
+            window.addEventListener('online', updateNetworkStatus);
+            window.addEventListener('offline', updateNetworkStatus);
+
+            // ==============================
+            // LIBRERIA PRESET - SALVATAGGIO & CARICAMENTO
+            // ==============================
+            var libraryPresets = [];
+
+            function loadLibraryPresets() {
+                try {
+                    var data = localStorage.getItem('pt_timer_library_presets');
+                    if (data) libraryPresets = JSON.parse(data);
+                    else libraryPresets = [];
+                } catch (e) { libraryPresets = []; }
+                updateLibraryButtonLabel();
+            }
+
+            function saveLibraryPresets() {
+                try {
+                    localStorage.setItem('pt_timer_library_presets', JSON.stringify(libraryPresets));
+                } catch (e) {}
+                updateLibraryButtonLabel();
+                renderLibraryItems();
+            }
+
+            function updateLibraryButtonLabel() {
+                btnOpenLibrary.textContent = '📁 Apri Libreria (' + libraryPresets.length + ')';
+            }
+
+            function addLibraryPreset(name) {
+                if (!name || name.trim() === '') {
+                    alert('Inserisci un nome per l\'allenamento!');
+                    return;
+                }
+                var newItem = {
+                    id: Date.now(),
+                    name: name.trim(),
+                    work: parseInt(valWork.textContent, 10) || 30,
+                    rest: parseInt(valRest.textContent, 10) || 15,
+                    rounds: parseInt(valRounds.textContent, 10) || 12,
+                    extraEvery: parseInt(valExtraEvery.textContent, 10) || 0,
+                    extraDur: parseInt(valExtraDur.textContent, 10) || 60,
+                    date: new Date().toLocaleDateString('it-IT')
+                };
+                libraryPresets.unshift(newItem);
+                saveLibraryPresets();
+                drawerSaveName.value = '';
+                alert('Workout "' + newItem.name + '" salvato in libreria!');
+            }
+
+            function deleteLibraryPreset(id) {
+                if (confirm('Sei sicuro di voler eliminare questo workout?')) {
+                    libraryPresets = libraryPresets.filter(function(item) { return item.id !== id; });
+                    saveLibraryPresets();
+                }
+            }
+
+            function loadLibraryPresetIntoTimer(id) {
+                var found = libraryPresets.find(function(item) { return item.id === id; });
+                if (!found) return;
+
+                settings.work = found.work;
+                settings.rest = found.rest;
+                settings.rounds = found.rounds;
+                settings.extraEvery = found.extraEvery;
+                settings.extraDur = found.extraDur;
+
+                syncUIFromSettings();
+                timerState.totalRounds = settings.rounds;
+                timerState.currentRound = 0;
+                timerState.currentTime = settings.work;
+                timerState.maxTime = settings.work;
+                resetUI();
+                updateUI();
+
+                presetBtns.forEach(function(b) { b.classList.remove('active'); });
+                closeLibraryModal();
+                closeDrawer();
+            }
+
+            function renderLibraryItems() {
+                var query = librarySearchInput.value.toLowerCase().trim();
+                libraryItemsList.innerHTML = '';
+
+                var filtered = libraryPresets.filter(function(item) {
+                    return item.name.toLowerCase().includes(query);
+                });
+
+                if (filtered.length === 0) {
+                    libraryItemsList.innerHTML = '<div class="empty-library-msg">' +
+                        (query ? 'Nessun allenamento trovato.' : 'Nessun allenamento salvato nella libreria.') +
+                        '</div>';
+                    return;
+                }
+
+                filtered.forEach(function(item) {
+                    var card = document.createElement('div');
+                    card.className = 'library-item';
+
+                    var info = document.createElement('div');
+                    info.className = 'library-item-info';
+
+                    var title = document.createElement('div');
+                    title.className = 'library-item-title';
+                    title.textContent = item.name;
+
+                    var details = document.createElement('div');
+                    details.className = 'library-item-details';
+                    details.innerHTML = '⏱ <span>' + item.work + 's</span> / 🧘🏻‍♀️ <span>' + item.rest + 's</span> | 🔁 <span>' + item.rounds + ' giri</span>' +
+                        (item.extraEvery > 0 ? ' | 🕝 Extra ogni <span>' + item.extraEvery + '</span>' : '');
+
+                    info.appendChild(title);
+                    info.appendChild(details);
+
+                    var actions = document.createElement('div');
+                    actions.className = 'library-item-actions';
+
+                    var btnLoad = document.createElement('button');
+                    btnLoad.className = 'btn-action-load';
+                    btnLoad.textContent = 'CARICA';
+                    btnLoad.addEventListener('click', function() { loadLibraryPresetIntoTimer(item.id); });
+
+                    var btnDel = document.createElement('button');
+                    btnDel.className = 'btn-action-del';
+                    btnDel.textContent = '🗑';
+                    btnDel.addEventListener('click', function() { deleteLibraryPreset(item.id); });
+
+                    actions.appendChild(btnLoad);
+                    actions.appendChild(btnDel);
+
+                    card.appendChild(info);
+                    card.appendChild(actions);
+
+                    libraryItemsList.appendChild(card);
+                });
+            }
+
+            btnSaveDrawer.addEventListener('click', function() {
+                addLibraryPreset(drawerSaveName.value);
+            });
+
+            librarySearchInput.addEventListener('input', renderLibraryItems);
+
+            function setControlButton(button, symbol, label) {
+                if (!button) return;
+                var symbolNode = button.querySelector('.control-symbol');
+                var labelNode = button.querySelector('.control-label');
+                if (symbolNode) symbolNode.textContent = symbol;
+                if (labelNode) labelNode.textContent = label;
+            }
+
+            var PHASE_ICONS = {
+                ready: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>',
+                countdown: '<svg viewBox="0 0 24 24"><path d="M8 3h8M9 3v3m6-3v3"/><circle cx="12" cy="14" r="7"/><path d="M12 10v4l3 2"/></svg>',
+                work: '<svg viewBox="0 0 64 64" aria-hidden="true"><line x1="20" y1="32" x2="44" y2="32"/><rect x="7" y="25" width="6" height="14" rx="2"/><rect x="13" y="20" width="7" height="24" rx="2"/><rect x="44" y="20" width="7" height="24" rx="2"/><rect x="51" y="25" width="6" height="14" rx="2"/></svg>',
+                rest: '<svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+                extra: '<svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2l-5-4.9 6.9-1z"/></svg>',
+                finished: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16.5 8"/></svg>'
+            };
+            function phaseVisual(status) {
+                var key = status === 'idle' ? 'ready' : (status === 'finished' ? 'finished' : status);
+                if (phaseIcon) phaseIcon.innerHTML = PHASE_ICONS[key] || PHASE_ICONS.ready;
+            }
+            function nextPhaseInfo() {
+                var status = timerState.status;
+                var label = '', color = '#aeb8c5';
+                if (status === 'countdown') { label='PROSSIMO: LAVORO'; color='#56ef35'; }
+                else if (status === 'work') {
+                    if (timerState.currentRound >= timerState.totalRounds) { label='ULTIMA FASE: COMPLETAMENTO'; color='#00dfff'; }
+                    else { label='PROSSIMO: RECUPERO'; color='#ff791e'; }
+                } else if (status === 'rest') {
+                    var extra = settings.extraEvery > 0 && timerState.currentRound % settings.extraEvery === 0 && timerState.currentRound < timerState.totalRounds && !timerState.extraTriggeredThisRound;
+                    label = extra ? 'PROSSIMO: GIRO EXTRA' : 'PROSSIMO: LAVORO';
+                    color = extra ? '#ee42e6' : '#56ef35';
+                } else if (status === 'extra') { label='PROSSIMO: LAVORO'; color='#56ef35'; }
+                else if (status === 'finished') { label='ALLENAMENTO COMPLETATO'; color='#56ef35'; }
+                if (timerState.isPaused && status !== 'idle' && status !== 'finished') label='IN PAUSA · ' + label;
+                if (nextPhase) { nextPhase.classList.toggle('is-empty', !label); nextPhase.innerHTML = label.replace(/^(PROSSIMO:|ULTIMA FASE:|IN PAUSA ·)/, function(m){return '<span>'+m+'</span>';}).replace(/(LAVORO|RECUPERO|GIRO EXTRA|COMPLETAMENTO|ALLENAMENTO COMPLETATO)/, '<strong>$1</strong>'); nextPhase.style.setProperty('--next-color',color); }
+            }
+
+            function formatCompactTime(seconds) {
+                seconds = Math.max(0, Math.round(Number(seconds) || 0));
+                var minutes = Math.floor(seconds / 60);
+                var secs = seconds % 60;
+                return minutes > 0 ? (minutes + ':' + String(secs).padStart(2, '0')) : String(secs);
+            }
+
+            function updateWorkoutSummary() {
+                if (!summaryWork) return;
+                summaryWork.textContent = formatCompactTime(settings.work);
+                summaryRest.textContent = formatCompactTime(settings.rest);
+                summaryExtra.textContent = settings.extraEvery > 0
+                    ? formatCompactTime(settings.extraDur)
+                    : '—';
+                summaryTotal.textContent = formatCompactTime(calculateTotalDuration());
+            }
+
+            // UPDATE UI
+            function updateDots() {
+                var total = timerState.totalRounds || 1;
+                var done = timerState.currentRound;
+                progressDots.innerHTML = '';
+                for (var i = 1; i <= total; i++) {
+                    var dot = document.createElement('span');
+                    dot.className = 'dot';
+                    if (i < done) dot.classList.add('done');
+                    else if (i === done && timerState.status !== 'idle' && timerState.status !== 'finished') {
+                        if (timerState.status === 'extra') dot.classList.add('extra-dot');
+                        else dot.classList.add('current');
+                    }
+                    progressDots.appendChild(dot);
+                }
+            }
+
+            function updateUI() {
+                bigNumber.textContent = Math.ceil(timerState.currentTime);
+                roundsInfo.textContent = 'Giro ' + timerState.currentRound + ' / ' + timerState.totalRounds;
+                updateDots();
+                phaseVisual(timerState.status);
+                nextPhaseInfo();
+
+                var progressInner = (timerState.maxTime > 0) ? (timerState.currentTime / timerState.maxTime) * 100 : 0;
+                var offsetInner = CIRC_INNER - (progressInner / 100) * CIRC_INNER;
+                ringInner.style.strokeDashoffset = offsetInner;
+
+                var ringGradient = 'url(#gradient-ready)';
+                var phaseClass = '';
+                var isRestWarning = (timerState.status === 'rest' && timerState.currentTime <= 3 && timerState.currentTime > 0);
+                if (timerState.status === 'work') { ringGradient = 'url(#gradient-work)'; phaseClass = 'phase-work'; }
+                else if (timerState.status === 'rest') {
+                    ringGradient = 'url(#gradient-rest)';
+                    phaseClass = isRestWarning ? 'phase-rest-warning' : 'phase-rest';
+                } else if (timerState.status === 'extra') { ringGradient = 'url(#gradient-extra)'; phaseClass = 'phase-extra'; }
+                else if (timerState.status === 'countdown') { ringGradient = 'url(#gradient-countdown)'; phaseClass = 'phase-countdown'; }
+                else if (timerState.status === 'finished') { ringGradient = 'url(#gradient-work)'; phaseClass = 'phase-finished'; }
+
+                ringInner.style.stroke = ringGradient;
+                ringOuter.style.stroke = 'url(#gradient-total)';
+                updateWorkoutSummary();
+                appDiv.classList.remove('phase-work', 'phase-rest', 'phase-rest-warning', 'phase-extra', 'phase-countdown', 'phase-finished');
+                if (phaseClass) appDiv.classList.add(phaseClass);
+
+                if (totalDuration > 0) {
+                    var progressOuter = (totalElapsed / totalDuration) * 100;
+                    if (progressOuter > 100) progressOuter = 100;
+                    var offsetOuter = CIRC_OUTER - (progressOuter / 100) * CIRC_OUTER;
+                    ringOuter.style.strokeDashoffset = offsetOuter;
+                } else {
+                    ringOuter.style.strokeDashoffset = CIRC_OUTER;
+                }
+            }
+
+            function resetUI() {
+                bigNumber.textContent = settings.work;
+                roundsInfo.textContent = 'Giro 0 / ' + settings.rounds;
+                phaseLabel.textContent = 'PRONTO';
+                appDiv.classList.remove('phase-work', 'phase-rest', 'phase-rest-warning', 'phase-extra', 'phase-countdown', 'phase-finished');
+                ringInner.style.strokeDashoffset = CIRC_INNER;
+                ringInner.style.stroke = 'url(#gradient-ready)';
+                ringOuter.style.strokeDashoffset = CIRC_OUTER;
+                btnStart.style.display = 'flex';
+                setControlButton(btnStart, '▶', 'PARTI');
+                btnStart.className = 'ctrl-btn idle';
+                btnPause.style.display = 'none';
+                btnSkipBack.style.display = 'none';
+                btnSkipForward.style.display = 'none';
+                btnStop.style.display = 'none';
+                timerState.currentRound = 0;
+                timerState.totalRounds = settings.rounds;
+                totalElapsed = 0;
+                lastCountdownSecond = -1;
+                timerState.phaseEndAt = 0;
+                timerState.phaseRunDuration = 0;
+                timerState.phaseElapsedAtStart = 0;
+                timerState.tickHandler = null;
+                updateDots();
+                phaseVisual('idle'); nextPhaseInfo();
+                stopTick();
+            }
+
+            // TIMER ENGINE AD ALTA PRECISIONE
+            // Il tempo non viene più sottratto a blocchi da 0,1 s: ogni fase usa
+            // una scadenza assoluta. In questo modo ritardi e throttling del browser
+            // non si accumulano durante l'allenamento.
+            function syncAccurateClock() {
+                if (!timerState.phaseEndAt || timerState.isPaused) return;
+
+                var remaining = Math.max(0, (timerState.phaseEndAt - Date.now()) / 1000);
+                timerState.currentTime = remaining;
+
+                var elapsedInRun = Math.max(0, timerState.phaseRunDuration - remaining);
+                totalElapsed = Math.min(
+                    totalDuration,
+                    timerState.phaseElapsedAtStart + elapsedInRun
+                );
+            }
+
+            function stopTimer(syncClock) {
+                if (syncClock !== false) syncAccurateClock();
+
+                if (timerState.timerInterval) {
+                    clearInterval(timerState.timerInterval);
+                    timerState.timerInterval = null;
+                }
+
+                timerState.tickHandler = null;
+                timerState.phaseEndAt = 0;
+                stopTick();
+            }
+
+            function shouldSignalTransition(overshootMs) {
+                return document.visibilityState === 'visible' && overshootMs < 1500;
+            }
+
+            function runAccuratePhase(onComplete, carryMs) {
+                stopTimer(false);
+                lastCountdownSecond = -1;
+
+                carryMs = Math.max(0, Number(carryMs) || 0);
+
+                // Se il callback è arrivato in ritardo, recupera il ritardo nella
+                // fase successiva anziché aggiungerlo alla durata del workout.
+                var phaseRemainingMs = Math.max(0, timerState.currentTime * 1000);
+                var consumedCarryMs = Math.min(carryMs, phaseRemainingMs);
+                if (consumedCarryMs > 0) {
+                    timerState.currentTime = Math.max(0, (phaseRemainingMs - consumedCarryMs) / 1000);
+                    totalElapsed = Math.min(totalDuration, totalElapsed + consumedCarryMs / 1000);
+                    carryMs -= consumedCarryMs;
+                }
+
+                if (timerState.currentTime <= 0) {
+                    timerState.currentTime = 0;
+                    updateUI();
+                    onComplete(carryMs);
+                    return;
+                }
+
+                timerState.phaseRunDuration = timerState.currentTime;
+                timerState.phaseElapsedAtStart = totalElapsed;
+                timerState.phaseEndAt = Date.now() + timerState.currentTime * 1000;
+
+                var tick = function() {
+                    if (timerState.isPaused || !timerState.phaseEndAt) return;
+
+                    var remainingMs = timerState.phaseEndAt - Date.now();
+                    var remainingSeconds = Math.max(0, remainingMs / 1000);
+                    timerState.currentTime = remainingSeconds;
+
+                    var elapsedInRun = Math.max(0, timerState.phaseRunDuration - remainingSeconds);
+                    totalElapsed = Math.min(
+                        totalDuration,
+                        timerState.phaseElapsedAtStart + elapsedInRun
+                    );
+
+                    handleCountdownTick();
+                    updateUI();
+
+                    if (remainingMs <= 0) {
+                        if (timerState.timerInterval) clearInterval(timerState.timerInterval);
+                        timerState.timerInterval = null;
+                        timerState.tickHandler = null;
+                        timerState.phaseEndAt = 0;
+                        timerState.currentTime = 0;
+                        totalElapsed = Math.min(
+                            totalDuration,
+                            timerState.phaseElapsedAtStart + timerState.phaseRunDuration
+                        );
+                        updateUI();
+                        onComplete(Math.max(0, -remainingMs));
+                    }
+                };
+
+                timerState.tickHandler = tick;
+                timerState.timerInterval = setInterval(tick, 100);
+                tick();
+            }
+
+            function startCountdownInterval(carryMs) {
+                runAccuratePhase(function(overshootMs) {
+                    if (shouldSignalTransition(overshootMs)) {
+                        setTimeout(function() { playBeep(1200, 80); }, 100);
+                    }
+                    startWorkPhase(overshootMs);
+                }, carryMs);
+            }
+
+            function startWorkInterval(carryMs) {
+                runAccuratePhase(function(overshootMs) {
+                    if (shouldSignalTransition(overshootMs)) {
+                        playGong();
+                        triggerVibration([300, 100, 300]);
+                    }
+                    if (timerState.currentRound >= timerState.totalRounds) finishWorkout();
+                    else startRestPhase(overshootMs);
+                }, carryMs);
+                if (tickEnabled && timerState.currentTime > 0) startTick();
+            }
+
+            function startRestInterval(carryMs) {
+                runAccuratePhase(function(overshootMs) {
+                    if (shouldSignalTransition(overshootMs)) {
+                        playEndAlert(false);
+                        triggerVibration([200, 100, 200]);
+                    }
+                    var shouldTriggerExtra = (settings.extraEvery > 0) &&
+                        (timerState.currentRound % settings.extraEvery === 0) &&
+                        !timerState.extraTriggeredThisRound &&
+                        (timerState.currentRound < timerState.totalRounds);
+                    if (shouldTriggerExtra) {
+                        timerState.extraTriggeredThisRound = true;
+                        startExtraPhase(overshootMs);
+                    } else startWorkPhase(overshootMs);
+                }, carryMs);
+            }
+
+            function startExtraInterval(carryMs) {
+                runAccuratePhase(function(overshootMs) {
+                    if (shouldSignalTransition(overshootMs)) {
+                        playEndAlert(false);
+                        triggerVibration([300]);
+                    }
+                    startWorkPhase(overshootMs);
+                }, carryMs);
+            }
+
+            // FASI
+            function startCountdown(carryMs) {
+                stopTimer(false);
+                carryMs = Math.max(0, Number(carryMs) || 0);
+                if (shouldSignalTransition(carryMs)) triggerVibration([100, 100, 100]);
+                timerState.status = 'countdown'; timerState.currentTime = 3; timerState.maxTime = 3;
+                timerState.isPaused = false; phaseLabel.textContent = 'PARTENZA';
+                btnSkipBack.style.display = 'none'; btnSkipForward.style.display = 'none'; btnStop.style.display = 'none';
+                updateUI(); startCountdownInterval(carryMs);
+            }
+
+            function startWorkPhase(carryMs) {
+                stopTimer(false);
+                carryMs = Math.max(0, Number(carryMs) || 0);
+                if (shouldSignalTransition(carryMs)) triggerVibration([200]);
+                timerState.status = 'work'; timerState.currentRound += 1;
+                timerState.currentTime = settings.work; timerState.maxTime = settings.work;
+                timerState.isPaused = false; timerState.extraTriggeredThisRound = false;
+                phaseLabel.textContent = 'LAVORO';
+                btnSkipBack.style.display = 'flex';
+                btnSkipForward.style.display = 'flex';
+                btnStop.style.display = 'flex';
+                updateUI(); startWorkInterval(carryMs);
+            }
+
+            function startRestPhase(carryMs) {
+                stopTimer(false);
+                carryMs = Math.max(0, Number(carryMs) || 0);
+                if (shouldSignalTransition(carryMs)) triggerVibration([100]);
+                timerState.status = 'rest'; timerState.currentTime = settings.rest; timerState.maxTime = settings.rest;
+                timerState.isPaused = false; phaseLabel.textContent = 'RECUPERO';
+                btnSkipBack.style.display = 'flex';
+                btnSkipForward.style.display = 'flex';
+                btnStop.style.display = 'flex';
+                updateUI(); stopTick(); startRestInterval(carryMs);
+            }
+
+            function startExtraPhase(carryMs) {
+                stopTimer(false);
+                carryMs = Math.max(0, Number(carryMs) || 0);
+                if (shouldSignalTransition(carryMs)) triggerVibration([100, 50, 100]);
+                timerState.status = 'extra'; timerState.currentTime = settings.extraDur; timerState.maxTime = settings.extraDur;
+                timerState.isPaused = false; phaseLabel.textContent = 'EXTRA ATTIVO';
+                btnSkipBack.style.display = 'flex';
+                btnSkipForward.style.display = 'flex';
+                btnStop.style.display = 'flex';
+                updateUI();
+                if (shouldSignalTransition(carryMs)) playExtraAlert();
+                stopTick(); startExtraInterval(carryMs);
+            }
+
+            function finishWorkout() {
+                stopTimer(false);
+                releaseWakeLock();
+                triggerVibration([100, 50, 100, 50, 300]);
+                timerState.status = 'finished'; timerState.currentTime = 0;
+                phaseLabel.textContent = 'COMPLETATO'; bigNumber.textContent = '0';
+                roundsInfo.textContent = 'Giro ' + timerState.currentRound + ' / ' + timerState.totalRounds;
+                ringInner.style.strokeDashoffset = 0; ringInner.style.stroke = 'var(--work-green)';
+                ringOuter.style.strokeDashoffset = 0;
+                if (totalDuration > 0) totalElapsed = totalDuration;
+                appDiv.classList.add('phase-finished'); phaseVisual('finished'); nextPhaseInfo();
+                btnStart.style.display = 'flex'; setControlButton(btnStart, '↻', 'RIAVVIA'); btnStart.className = 'ctrl-btn idle';
+                btnPause.style.display = 'none'; btnSkipBack.style.display = 'none'; btnSkipForward.style.display = 'none'; btnStop.style.display = 'none';
+                updateDots(); stopTick();
+                setTimeout(function() { playBeep(523, 200); }, 100);
+                setTimeout(function() { playBeep(659, 200); }, 300);
+                setTimeout(function() { playBeep(784, 400); }, 500);
+            }
+
+            // CONTROLLI
+            function skipBack() {
+                if (timerState.status === 'idle' || timerState.status === 'finished' || timerState.isPaused) return;
+
+                syncAccurateClock();
+                var s = timerState.status;
+                var elapsedCurrentPhase = Math.max(0, timerState.maxTime - timerState.currentTime);
+                stopTimer(false);
+
+                if (s === 'work') {
+                    if (timerState.currentRound > 1) {
+                        var previousRound = timerState.currentRound - 1;
+                        var hadExtra = settings.extraEvery > 0 &&
+                            previousRound % settings.extraEvery === 0 &&
+                            previousRound < timerState.totalRounds;
+                        var rollback = elapsedCurrentPhase + settings.rest + (hadExtra ? settings.extraDur : 0);
+                        totalElapsed = Math.max(0, totalElapsed - rollback);
+
+                        timerState.currentRound = previousRound;
+                        timerState.status = 'rest';
+                        timerState.currentTime = settings.rest; timerState.maxTime = settings.rest;
+                        timerState.extraTriggeredThisRound = false;
+                        phaseLabel.textContent = 'RECUPERO';
+                        updateUI(); triggerVibration([100]); stopTick(); startRestInterval();
+                    }
+                } else if (s === 'rest' || s === 'extra') {
+                    var rollbackToWork = elapsedCurrentPhase + settings.work;
+                    if (s === 'extra') rollbackToWork += settings.rest;
+                    totalElapsed = Math.max(0, totalElapsed - rollbackToWork);
+
+                    timerState.status = 'work'; timerState.currentTime = settings.work; timerState.maxTime = settings.work;
+                    timerState.extraTriggeredThisRound = false;
+                    phaseLabel.textContent = 'LAVORO'; updateUI(); triggerVibration([200]); startWorkInterval();
+                }
+            }
+
+            function skipForward() {
+                if (timerState.status === 'idle' || timerState.status === 'finished' || timerState.isPaused) return;
+
+                syncAccurateClock();
+                var remaining = timerState.currentTime;
+                if (remaining > 0) totalElapsed = Math.min(totalDuration, totalElapsed + remaining);
+                stopTimer(false);
+
+                var s = timerState.status;
+                if (s === 'countdown') {
+                    playBeep(1200, 80);
+                    triggerVibration([200]);
+                    startWorkPhase();
+                } else if (s === 'work') {
+                    playGong(); triggerVibration([200]);
+                    if (timerState.currentRound >= timerState.totalRounds) finishWorkout();
+                    else startRestPhase();
+                } else if (s === 'rest') {
+                    playEndAlert(false);
+                    triggerVibration([100]);
+                    var shouldTriggerExtra = (settings.extraEvery > 0) &&
+                        (timerState.currentRound % settings.extraEvery === 0) &&
+                        !timerState.extraTriggeredThisRound &&
+                        (timerState.currentRound < timerState.totalRounds);
+                    if (shouldTriggerExtra) {
+                        timerState.extraTriggeredThisRound = true;
+                        startExtraPhase();
+                    } else startWorkPhase();
+                } else if (s === 'extra') {
+                    playEndAlert(false); triggerVibration([100]); startWorkPhase();
+                }
+                updateUI();
+            }
+
+            function stopAll() {
+                stopTimer(); stopTick(); releaseWakeLock();
+                timerState.status = 'idle'; timerState.currentRound = 0; timerState.isPaused = false;
+                timerState.extraTriggeredThisRound = false; timerState.currentTime = settings.work;
+                timerState.maxTime = settings.work; timerState.totalRounds = settings.rounds;
+                totalElapsed = 0; lastCountdownSecond = -1;
+                syncUIFromSettings(); resetUI(); updateUI();
+            }
+
+            function togglePause() {
+                if (timerState.status === 'idle' || timerState.status === 'finished') return;
+
+                if (timerState.isPaused) {
+                    timerState.isPaused = false;
+                    setControlButton(btnStart, 'Ⅱ', 'PAUSA'); btnStart.className = 'ctrl-btn running';
+                    requestWakeLock();
+
+                    var s = timerState.status;
+                    if (s === 'work') startWorkInterval();
+                    else if (s === 'rest') startRestInterval();
+                    else if (s === 'extra') startExtraInterval();
+                    else if (s === 'countdown') startCountdownInterval();
+                } else {
+                    syncAccurateClock();
+                    timerState.isPaused = true;
+                    setControlButton(btnStart, '▶', 'RIPRENDI'); btnStart.className = 'ctrl-btn idle';
+                    stopTimer(false); stopTick(); releaseWakeLock(); updateUI();
+                }
+            }
+
+            function syncUIFromSettings() {
+                valWork.textContent = settings.work; valRest.textContent = settings.rest;
+                valRounds.textContent = settings.rounds; valExtraEvery.textContent = settings.extraEvery;
+                valExtraDur.textContent = settings.extraDur;
+                updateWorkoutSummary();
+            }
+
+            function loadSettingsIntoState() {
+                settings.work = parseInt(valWork.textContent, 10) || 30;
+                settings.rest = parseInt(valRest.textContent, 10) || 15;
+                settings.rounds = parseInt(valRounds.textContent, 10) || 8;
+                settings.extraEvery = parseInt(valExtraEvery.textContent, 10) || 0;
+                settings.extraDur = parseInt(valExtraDur.textContent, 10) || 60;
+                timerState.totalRounds = settings.rounds;
+                if (timerState.status === 'idle' || timerState.status === 'finished') {
+                    timerState.currentTime = settings.work; timerState.maxTime = settings.work;
+                    bigNumber.textContent = settings.work; roundsInfo.textContent = 'Giro 0 / ' + settings.rounds;
+                    ringInner.style.strokeDashoffset = CIRC_INNER; ringInner.style.stroke = 'url(#gradient-ready)';
+                    ringOuter.style.strokeDashoffset = CIRC_OUTER; phaseLabel.textContent = 'PRONTO';
+                    appDiv.classList.remove('phase-work', 'phase-rest', 'phase-rest-warning', 'phase-extra', 'phase-countdown', 'phase-finished');
+                    updateDots();
+                }
+                updateWorkoutSummary();
+            }
+
+            function loadPreset(name) {
+                if (timerState.status !== 'idle' && timerState.status !== 'finished') return;
+                var preset = PRESETS[name]; if (!preset) return;
+                settings.work = preset.work; settings.rest = preset.rest;
+                settings.rounds = preset.rounds; settings.extraEvery = preset.extraEvery;
+                settings.extraDur = preset.extraDur;
+                syncUIFromSettings();
+                timerState.totalRounds = settings.rounds; timerState.currentRound = 0;
+                timerState.currentTime = settings.work; timerState.maxTime = settings.work;
+                totalElapsed = 0; resetUI(); updateUI();
+                presetBtns.forEach(function(b) { b.classList.remove('active'); });
+                var target = document.querySelector('#drawer .preset-btn[data-preset="' + name + '"]');
+                if (target) target.classList.add('active');
+            }
+
+            function handleStart() {
+                initAudio();
+                if (timerState.status === 'idle' || timerState.status === 'finished') {
+                    loadSettingsIntoState();
+                    totalDuration = calculateTotalDuration();
+                    if (totalDuration <= 0) totalDuration = 1;
+                    totalElapsed = 0; timerState.currentRound = 0; timerState.extraTriggeredThisRound = false;
+                    timerState.currentTime = settings.work; timerState.maxTime = settings.work;
+                    setControlButton(btnStart, 'Ⅱ', 'PAUSA'); btnStart.className = 'ctrl-btn running';
+                    btnSkipBack.style.display = 'none'; btnSkipForward.style.display = 'none'; btnStop.style.display = 'none';
+                    requestWakeLock();
+                    startCountdown();
+                } else togglePause();
+            }
+
+            function isRunning() { return timerState.status !== 'idle' && timerState.status !== 'finished'; }
+
+            function adjustValue(el, delta, min, max) {
+                if (isRunning()) return;
+                var val = parseInt(el.textContent, 10) + delta;
+                if (val < min) val = min; if (val > max) val = max;
+                el.textContent = val;
+                if (timerState.status === 'idle' || timerState.status === 'finished') {
+                    loadSettingsIntoState(); resetUI(); updateUI();
+                }
+            }
+
+            // EVENTI CONTROLLI IMPOSTAZIONI
+            document.getElementById('dec-work').addEventListener('click', function() { adjustValue(valWork, -1, 3, 300); });
+            document.getElementById('inc-work').addEventListener('click', function() { adjustValue(valWork, 1, 3, 300); });
+            document.getElementById('dec-rest').addEventListener('click', function() { adjustValue(valRest, -1, 1, 300); });
+            document.getElementById('inc-rest').addEventListener('click', function() { adjustValue(valRest, 1, 1, 300); });
+            document.getElementById('dec-rounds').addEventListener('click', function() { adjustValue(valRounds, -1, 1, 99); });
+            document.getElementById('inc-rounds').addEventListener('click', function() { adjustValue(valRounds, 1, 1, 99); });
+            document.getElementById('dec-extra-every').addEventListener('click', function() { adjustValue(valExtraEvery, -1, 0, 99); });
+            document.getElementById('inc-extra-every').addEventListener('click', function() { adjustValue(valExtraEvery, 1, 0, 99); });
+            document.getElementById('dec-extra-dur').addEventListener('click', function() { adjustValue(valExtraDur, -1, 5, 600); });
+            document.getElementById('inc-extra-dur').addEventListener('click', function() { adjustValue(valExtraDur, 1, 5, 600); });
+
+            presetBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    loadPreset(btn.getAttribute('data-preset'));
+                });
+            });
+
+            btnStart.addEventListener('click', handleStart);
+            btnSkipBack.addEventListener('click', skipBack);
+            btnSkipForward.addEventListener('click', skipForward);
+            btnStop.addEventListener('click', stopAll);
+
+            // WAKE LOCK: attivo solo mentre il timer sta realmente lavorando.
+            var wakeLockSentinel = null;
+
+            async function requestWakeLock() {
+                if (!appPreferences.wakeLockEnabled) return;
+                if (!('wakeLock' in navigator)) return;
+                if (!isRunning() || timerState.isPaused || document.visibilityState !== 'visible') return;
+                if (wakeLockSentinel) return;
+
+                try {
+                    wakeLockSentinel = await navigator.wakeLock.request('screen');
+                    wakeLockSentinel.addEventListener('release', function() {
+                        wakeLockSentinel = null;
+                    });
+                } catch (e) {
+                    wakeLockSentinel = null;
+                }
+            }
+
+            async function releaseWakeLock() {
+                if (!wakeLockSentinel) return;
+                var lock = wakeLockSentinel;
+                wakeLockSentinel = null;
+                try { await lock.release(); } catch (e) {}
+            }
+
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    // Forza un aggiornamento immediato dopo un eventuale throttling.
+                    if (typeof timerState.tickHandler === 'function') timerState.tickHandler();
+                    if (isRunning() && !timerState.isPaused) requestWakeLock();
+                } else {
+                    releaseWakeLock();
+                }
+            });
+
+            window.addEventListener('pagehide', releaseWakeLock);
+
+            // PWA / OFFLINE: registrazione del Service Worker su HTTPS o localhost.
+            if ('serviceWorker' in navigator &&
+                (location.protocol === 'https:' || location.hostname === 'localhost')) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('./service-worker.js').catch(function() {});
+                });
+            }
+
+            // INIT
+            loadAppPreferences();
+            applyAppPreferencesToUI();
+            loadTickState();
+            loadLibraryPresets();
+            loadPreset('hiit');
+        });
+    </script>
+</body>
+</html>
