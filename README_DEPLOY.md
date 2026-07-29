@@ -136,3 +136,21 @@ Le funzioni e la persistenza locale erano già presenti; il problema riguardava 
 - A timer fermo lo slot è invisibile ma mantiene la stessa altezza.
 - Timeline delle fasi più piccola e discreta.
 - Fasi future attenuate, completate quasi spente, corrente evidenziata senza glow eccessivo.
+
+
+## Timer 2.0.0-rc3 — Timeline e riepilogo
+
+- Timeline delle fasi spostata sopra i cerchi riepilogativi.
+- Cerchio Extra nascosto completamente quando la pausa extra è disattivata.
+- Il riepilogo si ricentra automaticamente su Lavoro, Recupero e Totale.
+
+
+## Timer 2.0.0-rc4 — Dynamic Total & Clean Next
+
+- Il cerchio Totale mostra ora il tempo residuo dell'allenamento.
+- Il residuo segue lo scorrimento reale del timer e gli eventuali salti avanti/indietro.
+- La Preparazione non riduce il totale, perché resta esclusa dalla durata dell'allenamento.
+- A fine workout il residuo arriva a zero.
+- Il testo Prossimo/Next non ha più bordo, sfondo o capsula.
+- Il testo Prossimo separa visivamente la timeline dai cerchi riepilogativi.
+- Timeline leggermente sollevata e pallini futuri più discreti.

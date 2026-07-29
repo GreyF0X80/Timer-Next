@@ -1115,8 +1115,9 @@
             align-items: flex-start;
             justify-content: center;
             gap: clamp(10px, 4vw, 25px);
-            padding: 6px 0 8px;
-            flex-shrink: 0;
+            padding: 4px 0 9px;
+            margin-top:2px;
+            flex-shrink:0;
         }
         .summary-chip { min-width:0; display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:0; box-shadow:none; padding:0; }
         .summary-ring {
@@ -1133,24 +1134,41 @@
         .summary-total { --sum-gradient:linear-gradient(135deg,#061f52,#00e5ff); --sum-glow:rgba(0,223,255,.55); }
 
         #next-phase {
-            width:min(100%,520px); min-height:38px; padding:8px 18px; margin:2px 0 7px;
-            border:1px solid rgba(255,255,255,.1); border-radius:999px;
-            display:flex; align-items:center; justify-content:center; gap:6px;
-            background:rgba(5,12,21,.68); color:#9da9b8;
-            font-size:clamp(.64rem,2.3vw,.78rem); letter-spacing:.4px;
-            backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+            width:min(100%,520px);
+            min-height:25px;
+            margin:0 0 7px;
+            padding:0 14px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:var(--next-color,#9da9b8);
+            font-size:clamp(.62rem,2.25vw,.76rem);
+            font-weight:700;
+            letter-spacing:.75px;
+            text-transform:uppercase;
+            text-align:center;
+            background:none;
+            border:0;
+            border-radius:0;
+            box-shadow:none;
+            backdrop-filter:none;
+            -webkit-backdrop-filter:none;
+            text-shadow:0 0 11px color-mix(in srgb,var(--next-color,#9da9b8) 34%,transparent);
         }
-        #next-phase strong { color:var(--next-color,#fff); letter-spacing:.7px; }
+        #next-phase.is-empty {
+            visibility:hidden;
+        }
 
         /* TIMELINE DELLE SESSIONI: ogni pallino rappresenta una fase reale */
         #progress-dots-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px 0;
-            flex-shrink: 0;
-            min-height: 24px;
+            width:100%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:4px 0 3px;
+            margin-top:-3px;
+            flex-shrink:0;
+            min-height:21px;
         }
         #progress-dots {
             display: flex;
@@ -1185,7 +1203,7 @@
             filter: saturate(1.2) brightness(1.18);
             box-shadow: 0 0 5px var(--dot-color), 0 0 13px color-mix(in srgb, var(--dot-color) 78%, transparent);
         }
-        .dot.future { opacity:.78; }
+        .dot.future { opacity:.56; }
 
         /* ==================== CONTROLLI CIRCOLARI ==================== */
         #controls { width:100%; display:flex; align-items:flex-start; justify-content:center; gap:clamp(10px,3.5vw,22px); padding:2px 0 7px; flex-shrink:0; }
@@ -2073,6 +2091,31 @@
             box-shadow: 0 0 4px var(--dot-color), 0 0 9px color-mix(in srgb, var(--dot-color) 48%, transparent);
         }
 
+
+        /* ==================== V23 TIMELINE / SUMMARY REFINEMENT ==================== */
+        #progress-dots-container {
+            padding: 5px 0 4px;
+            min-height: 19px;
+        }
+        #workout-summary {
+            padding-top: 4px;
+        }
+        .summary-chip[hidden] {
+            display: none !important;
+        }
+
+
+        /* RC4: totale residuo e gerarchia più pulita */
+        #summary-total-chip.is-running .summary-ring {
+            box-shadow:
+                0 0 17px rgba(0,223,255,.28),
+                0 0 7px rgba(0,0,0,.5);
+        }
+        #summary-total-chip.is-running .summary-value {
+            color:#dffcff;
+            text-shadow:0 0 8px rgba(0,229,255,.42);
+        }
+
 </style>
 </head>
 <body>
@@ -2356,7 +2399,7 @@
                 <h3 id="settings-info-title" class="settings-group-title">Informazioni</h3>
                 <div class="app-info-card">
                     <div class="app-info-line"><span>App</span><strong>Timer</strong></div>
-                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">2.0.0-rc2</strong></div>
+                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">2.0.0-rc4</strong></div>
                     <div class="app-info-line"><span>Stato</span><span id="network-status" class="network-status"><span class="network-dot"></span><strong id="network-status-label">Online</strong></span></div>
                     <div class="app-info-line"><span>Copyright</span><strong>© 2026 MC</strong></div>
                 </div>
@@ -2417,18 +2460,19 @@
             </div>
         </div>
 
+        <!-- TIMELINE DELLE FASI -->
+        <div id="progress-dots-container">
+            <div id="progress-dots"></div>
+        </div>
+
+        <!-- TESTO LIBERO: PROSSIMA FASE -->
+        <div id="next-phase" aria-live="polite"></div>
+
         <div id="workout-summary" aria-label="Composizione allenamento">
             <div class="summary-chip summary-work"><div class="summary-ring"><span class="summary-value" id="summary-work">30</span></div><span class="summary-label">Lavoro</span></div>
             <div class="summary-chip summary-rest"><div class="summary-ring"><span class="summary-value" id="summary-rest">15</span></div><span class="summary-label">Recupero</span></div>
-            <div class="summary-chip summary-extra"><div class="summary-ring"><span class="summary-value" id="summary-extra">1:00</span></div><span class="summary-label">Extra</span></div>
-            <div class="summary-chip summary-total"><div class="summary-ring"><span class="summary-value" id="summary-total">10:48</span></div><span class="summary-label">Totale</span></div>
-        </div>
-
-        <div id="next-phase" aria-live="polite"></div>
-
-        <!-- PALLINI -->
-        <div id="progress-dots-container">
-            <div id="progress-dots"></div>
+            <div class="summary-chip summary-extra" id="summary-extra-chip"><div class="summary-ring"><span class="summary-value" id="summary-extra">1:00</span></div><span class="summary-label">Extra</span></div>
+            <div class="summary-chip summary-total" id="summary-total-chip" aria-live="polite"><div class="summary-ring"><span class="summary-value" id="summary-total">10:48</span></div><span class="summary-label">Totale</span></div>
         </div>
 
         <!-- CONTROLLI -->
@@ -2447,7 +2491,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             "use strict";
 
-            var APP_VERSION = '2.0.0-rc2';
+            var APP_VERSION = '2.0.0-rc4';
             var PREFERENCES_KEY = 'kp_timer_preferences_v1';
             var DEFAULT_APP_PREFERENCES = {
                 soundEnabled: true,
@@ -2566,7 +2610,9 @@
             var summaryWork = document.getElementById('summary-work');
             var summaryRest = document.getElementById('summary-rest');
             var summaryExtra = document.getElementById('summary-extra');
+            var summaryExtraChip = document.getElementById('summary-extra-chip');
             var summaryTotal = document.getElementById('summary-total');
+            var summaryTotalChip = document.getElementById('summary-total-chip');
             var appDiv = document.getElementById('app');
             var btnStart = document.getElementById('btn-start');
             var btnPause = document.getElementById('btn-pause');
@@ -3119,7 +3165,7 @@
                     back:'BACK', forward:'NEXT', stop:'STOP',
                     next_work:'NEXT: WORK', next_rest:'NEXT: REST', next_extra:'NEXT: EXTRA',
                     last_completion:'FINAL PHASE: COMPLETION', completed:'WORKOUT COMPLETED',
-                    paused_prefix:'PAUSED · ', summary_total:'TOTAL',
+                    paused_prefix:'PAUSED · ', summary_total:'TOTAL REMAINING',
                     rounds_unit:'rounds', extra_disabled:'disabled'
                 },
                 it: {
@@ -3156,7 +3202,7 @@
                     back:'INDIETRO', forward:'AVANTI', stop:'STOP',
                     next_work:'PROSSIMO: LAVORO', next_rest:'PROSSIMO: RECUPERO', next_extra:'PROSSIMO: GIRO EXTRA',
                     last_completion:'ULTIMA FASE: COMPLETAMENTO', completed:'ALLENAMENTO COMPLETATO',
-                    paused_prefix:'IN PAUSA · ', summary_total:'TOTALE',
+                    paused_prefix:'IN PAUSA · ', summary_total:'TOTALE RESIDUO',
                     rounds_unit:'giri', extra_disabled:'disattivato'
                 }
             };
@@ -3263,7 +3309,7 @@
                 if (summaryLabels[0]) summaryLabels[0].textContent = t('work');
                 if (summaryLabels[1]) summaryLabels[1].textContent = t('rest');
                 if (summaryLabels[2]) summaryLabels[2].textContent = 'EXTRA';
-                if (summaryLabels[3]) summaryLabels[3].textContent = t('summary_total');
+                if (summaryLabels[3]) summaryLabels[3].textContent = resolvedLanguage() === 'it' ? 'RESIDUO' : 'REMAINING';
 
                 updateLibraryButtonLabel();
                 updateBuilderDuration();
@@ -3695,12 +3741,45 @@
 
             function updateWorkoutSummary() {
                 if (!summaryWork) return;
+
+                var extraEnabled = settings.extraEvery > 0;
                 summaryWork.textContent = formatCompactTime(settings.work);
                 summaryRest.textContent = formatCompactTime(settings.rest);
-                summaryExtra.textContent = settings.extraEvery > 0
-                    ? formatCompactTime(settings.extraDur)
-                    : '—';
-                summaryTotal.textContent = formatCompactTime(calculateTotalDuration());
+                summaryExtra.textContent = formatCompactTime(settings.extraDur);
+
+                if (summaryExtraChip) {
+                    summaryExtraChip.hidden = !extraEnabled;
+                    summaryExtraChip.setAttribute('aria-hidden', extraEnabled ? 'false' : 'true');
+                }
+
+                var configuredTotal = calculateTotalDuration();
+                var isActiveWorkout =
+                    timerState.status !== 'idle' &&
+                    timerState.status !== 'countdown' &&
+                    timerState.status !== 'finished';
+
+                var remainingTotal;
+                if (timerState.status === 'finished') {
+                    remainingTotal = 0;
+                } else if (isActiveWorkout) {
+                    remainingTotal = Math.max(0, configuredTotal - totalElapsed);
+                } else {
+                    // Durante la preparazione il totale non scala, perché la
+                    // preparazione è esclusa dalla durata dell'allenamento.
+                    remainingTotal = configuredTotal;
+                }
+
+                summaryTotal.textContent = formatCompactTime(
+                    isActiveWorkout ? Math.ceil(remainingTotal) : remainingTotal
+                );
+
+                if (summaryTotalChip) {
+                    summaryTotalChip.classList.toggle('is-running', isActiveWorkout);
+                    summaryTotalChip.setAttribute(
+                        'aria-label',
+                        t('summary_total') + ': ' + summaryTotal.textContent
+                    );
+                }
             }
 
             // TIMELINE SESSIONI: lavoro, recupero ed eventuale extra in ordine reale.
@@ -4041,6 +4120,7 @@
                 ringInner.style.strokeDashoffset = 0; ringInner.style.stroke = 'var(--work-green)';
                 ringOuter.style.strokeDashoffset = 0;
                 if (totalDuration > 0) totalElapsed = totalDuration;
+                updateWorkoutSummary();
                 appDiv.classList.add('phase-finished'); phaseVisual('finished'); nextPhaseInfo();
                 btnStart.style.display = 'flex'; setControlButton(btnStart, 'play', t('restart')); btnStart.className = 'ctrl-btn idle';
                 btnPause.style.display = 'none'; btnSkipBack.style.display = 'none'; btnSkipForward.style.display = 'none'; btnStop.style.display = 'none';

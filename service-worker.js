@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timer-v22-stable-layout-2026-07-29';
+const CACHE_NAME = 'timer-v24-dynamic-total-clean-next-2026-07-29';
 const CORE_ASSETS = [
   './',
   './index.html',
