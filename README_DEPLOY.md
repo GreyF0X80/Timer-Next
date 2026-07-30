@@ -1,156 +1,96 @@
-# Timer — PWA offline v1.5.0
+# Timer 2.0.0
 
-## Pubblicazione su GitHub Pages
+Timer is an installable, offline-first interval timer for HIIT, Tabata, strength and cardio sessions. It supports configurable preparation, work, recovery, rounds and periodic extra phases without requiring an account or backend.
 
-1. Sostituisci il file HTML attuale con `index.html`.
-2. Carica nella stessa directory `manifest.webmanifest`, `service-worker.js` e la cartella `icons/`.
-3. Mantieni nella stessa directory il file esistente `Logo-Blu.svg`: viene mostrato esclusivamente con il tema **Krio**.
-4. Pubblica le modifiche e apri una volta l’app con connessione internet.
-5. Ricarica la pagina e poi riapri la web app dalla schermata Home.
+## Package structure
 
-## Identità dell’app
+- `index.html` — complete application interface and timer engine.
+- `manifest.webmanifest` — PWA identity, icons and installation metadata.
+- `service-worker.js` — offline cache and update lifecycle.
+- `Logo-Blu.svg` — KrioPlanet theme logo.
+- `icons/` — favicon, Apple touch icon, standard and maskable PWA icons.
+- `PRIVACY_POLICY.md` — privacy information for the web release.
+- `SUPPORT.md` — support and troubleshooting information.
 
-L’app installata si chiama **Timer** e usa sempre l’icona con gli anelli e il numero 30.
+## Publishing
 
-All’interno dell’interfaccia:
+1. Upload every package file without changing the directory structure.
+2. Serve the application over HTTPS. `localhost` may be used for development.
+3. Open the published URL once while online and verify that the Service Worker reaches the activated state.
+4. Reload the page and install Timer from the browser installation command or, on iPhone/iPad, with **Share → Add to Home Screen**.
+5. Close the installed app completely, disable the network and reopen it to validate offline startup.
 
-- con il tema **Krio** compaiono il logo e la scritta `KRIOPLANET`;
-- con tutti gli altri temi compaiono l’icona della web app e la scritta `TIMER`.
+Static hosting such as GitHub Pages, Cloudflare Pages or Netlify is sufficient. No backend or database server is required.
 
-Su iPhone il nome sotto l’icona può restare memorizzato. Per passare da “KrioPlanet” a “Timer”, elimina la vecchia icona dalla schermata Home e aggiungi nuovamente la pagina da Safari con **Condividi → Aggiungi alla schermata Home**.
+## Offline operation and cache updates
 
-## Temi
+The Service Worker precaches every required application asset. Installation fails instead of silently completing when an essential asset is missing. During activation, obsolete Timer caches are removed while caches belonging to unrelated applications on the same origin are preserved.
 
-Sono disponibili sei temi:
+For every published application update:
 
-- Krio;
-- Ghiaccio;
-- Pulse;
-- Energia;
-- Aurora;
-- Neon.
+1. change `CACHE_NAME` in `service-worker.js`;
+2. publish all changed assets together;
+3. open the app online and reload once;
+4. verify the new Service Worker and offline relaunch before removing the previous deployment.
 
-Ogni tema modifica colori principali, superfici, bagliori, sfondo e colore delle barre di sistema. Lo sfondo usa più livelli luminosi statici per dare maggiore profondità senza introdurre un’animazione continua che consumerebbe più batteria.
+The final cache for this release is `timer-v2.0.0-2026-07-30`.
 
-## Informazioni
+## Installation
 
-La sezione Informazioni mostra:
+Timer can be installed as a PWA on compatible mobile and desktop browsers. The manifest does not lock orientation: portrait and landscape are both supported. Browser installation wording varies by platform.
 
-- App: `Timer`;
-- Versione: `1.5.0`;
-- Copyright: `© 2026 MC`.
+## Themes and local branding
 
-## Suoni e avvisi fine fase
+Timer includes:
 
-La versione 1.5.0 mantiene due stili sonori normali (`Campana` e `Minimal`) e una selezione indipendente per l’avviso allo scadere di ogni fase:
+- Standard;
+- KrioPlanet;
+- Custom.
 
-- Come stile suono;
-- Campana doppia;
-- Sveglia;
-- Sirena;
-- Buzzer industriale;
-- Fischietto.
+The Custom theme stores the selected name and colors in `localStorage`. A personal PNG, JPEG, WebP or SVG logo up to 2 MB is stored locally in IndexedDB. Functional phase colors remain fixed for clarity.
 
-Gli avvisi **Sveglia**, **Sirena** e **Buzzer** sono progettati per risultare riconoscibili anche in ambienti rumorosi. È consigliato provarli inizialmente con un volume basso. Tutti i suoni sono generati localmente tramite Web Audio API: non servono file audio esterni e il funzionamento resta completamente offline.
+## Languages
 
-## Offline
+The default mode is **Automatic — Device language**. Italian and English are supported. Unsupported device languages fall back to English. A manual selection overrides automatic detection and persists offline.
 
-Dopo il primo caricamento online, HTML, manifest, icone e logo vengono salvati nella cache. Timer, preset e libreria continuano a funzionare senza connessione. I workout personali restano nel `localStorage` del browser.
+## Local privacy
 
-## Nota Service Worker
+Timer does not require an account and the current PWA does not send workout, preference or branding data to a server. Workouts and preferences remain in browser storage on the device. See `PRIVACY_POLICY.md` for the complete web-release statement.
 
-Il Service Worker funziona su HTTPS o localhost. GitHub Pages usa HTTPS e non richiede configurazioni aggiuntive. La cache di questa release è `timer-v9-classic-icon-2026-07-29`.
+## Browser and device limitations
 
+- Service Workers require HTTPS or localhost.
+- Audio must be unlocked by a user interaction and can be affected by browser, silent-mode and Bluetooth behavior.
+- Vibration is not available in every browser, including some Apple platforms.
+- Screen Wake Lock is used only when supported and permitted by the browser. On unsupported devices the timer continues to operate, but the screen may dim or lock.
+- Storage can be cleared by the user, the operating system or browser data-management tools.
+- Installing over an older Home Screen copy may require removing and reinstalling the icon when platform metadata is strongly cached.
 
-## Icona Classic multicolore
+## Test procedure
 
-La release 1.5.0 usa l’icona multicolore neutra come icona PWA e come identità TIMER all’interno dei temi non-Krio. Il tema Krio continua a mostrare il logo KrioPlanet.
+Before promotion, complete a release test matrix covering:
 
+- clean online installation and offline relaunch;
+- update from the previous cache;
+- timer transitions, pause, skip, background recovery and completion;
+- portrait and landscape layouts;
+- Standard, KrioPlanet and Custom themes;
+- Italian, English and unsupported-language fallback;
+- sound, vibration and Wake Lock behavior on physical devices.
 
-Versione 1.7.0: header separato menu/impostazioni, layout render, fix controlli.
+Automated validation cannot replace physical tests for audio routing, vibration, safe areas, Home Screen installation, operating-system background behavior or Wake Lock.
 
+## Rollback
 
-## Correzioni 1.7.0
-- pannello Impostazioni spostato fuori dal drawer sinistro, così compare correttamente sopra l’overlay;
-- gestione visibilità e z-index resa esplicita;
-- icona Lavoro ridisegnata come manubrio vettoriale più leggibile.
+1. Restore the previously validated package on the host.
+2. Give its Service Worker a new cache name so browsers treat the rollback as an update.
+3. Publish the restored files together.
+4. Open and reload online, then verify offline startup.
+5. Do not reuse the failed release cache name.
 
+## Release
 
-## Aggiornamento 1.7.4
-
-Sostituita e uniformata l'icona Standard/PWA con la versione Classic definitiva: anello esterno blu-ciano, anello interno rosso-arancio e numero 30 bianco. La stessa immagine viene usata nella Home screen, nel manifest e nell'interfaccia del tema Standard.
-
-
-### Correzione 1.7.4
-Sfondo uniforme su tutta la superficie iOS, comprese safe area, barra superiore, area centrale e bordi del viewport.
-
-
-## Aggiornamento 1.8.0
-
-La timeline a pallini ora rappresenta tutte le fasi reali dell’allenamento:
-- verde = lavoro;
-- arancio = recupero;
-- viola = giro extra.
-
-Le fasi future restano colorate, quella corrente è evidenziata e quelle completate vengono attenuate.
-
-
-## Timer 1.9.0 — Custom Branding
-
-Il tema **Personalizzato** consente di scegliere:
-- nome mostrato nell'intestazione;
-- logo locale (PNG, JPEG, WebP o SVG, massimo 2 MB);
-- colore dello sfondo;
-- colore delle icone superiori;
-- colore di accento;
-- colore del testo del brand.
-
-Il logo viene memorizzato in IndexedDB esclusivamente sul dispositivo. Le altre preferenze sono salvate in localStorage e funzionano offline.
-
-
-## Timer 1.9.1 — selettori Impostazioni
-
-Ripristinata la visualizzazione corretta dei selettori per:
-- suoni degli ultimi 3 secondi;
-- tick durante il lavoro;
-- vibrazione.
-
-Le funzioni e la persistenza locale erano già presenti; il problema riguardava lo stile CSS, rimasto limitato al vecchio menu sinistro.
-
-
-## Timer 2.0.0-rc1 — Workout Builder & Languages
-
-- Menu sinistro ridisegnato con card e stepper grandi.
-- Preparazione regolabile da 0 a 30 secondi, predefinita a 3.
-- Preparazione esclusa dal totale dell'allenamento.
-- Lavoro/recupero a step di 5 secondi, giri e frequenza extra a step di 1.
-- Pressione prolungata su +/− per regolazione continua.
-- Preparazione salvata nei preset personalizzati.
-- Lingua Automatica (dispositivo), English e Italiano.
-- Fallback in inglese per lingue non supportate.
-
-
-## Timer 2.0.0-rc2 — Stable Layout
-
-- Lo spazio della barra “Next/Prossimo” resta sempre riservato, evitando spostamenti al primo avvio.
-- A timer fermo lo slot è invisibile ma mantiene la stessa altezza.
-- Timeline delle fasi più piccola e discreta.
-- Fasi future attenuate, completate quasi spente, corrente evidenziata senza glow eccessivo.
-
-
-## Timer 2.0.0-rc3 — Timeline e riepilogo
-
-- Timeline delle fasi spostata sopra i cerchi riepilogativi.
-- Cerchio Extra nascosto completamente quando la pausa extra è disattivata.
-- Il riepilogo si ricentra automaticamente su Lavoro, Recupero e Totale.
-
-
-## Timer 2.0.0-rc4 — Dynamic Total & Clean Next
-
-- Il cerchio Totale mostra ora il tempo residuo dell'allenamento.
-- Il residuo segue lo scorrimento reale del timer e gli eventuali salti avanti/indietro.
-- La Preparazione non riduce il totale, perché resta esclusa dalla durata dell'allenamento.
-- A fine workout il residuo arriva a zero.
-- Il testo Prossimo/Next non ha più bordo, sfondo o capsula.
-- Il testo Prossimo separa visivamente la timeline dai cerchi riepilogativi.
-- Timeline leggermente sollevata e pallini futuri più discreti.
+- Product: Timer
+- Version: 2.0.0
+- Distribution: offline-first PWA and standalone HTML
+- Copyright: © 2026 MC

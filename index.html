@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it" data-theme="standard">
+<html lang="en" data-theme="standard">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -2105,7 +2105,7 @@
         }
 
 
-        /* RC4: totale residuo e gerarchia più pulita */
+        /* : totale residuo e gerarchia più pulita */
         #summary-total-chip.is-running .summary-ring {
             box-shadow:
                 0 0 17px rgba(0,223,255,.28),
@@ -2116,13 +2116,209 @@
             text-shadow:0 0 8px rgba(0,229,255,.42);
         }
 
+
+        /* ==================== 2.0 RELEASE HARDENING ==================== */
+        :where(button, select, input, [role="switch"], [tabindex]):focus-visible {
+            outline: 3px solid color-mix(in srgb, var(--primary-cyan) 78%, white 18%);
+            outline-offset: 3px;
+        }
+
+        #drawer,
+        #app-settings-panel,
+        #library-modal {
+            outline: none;
+        }
+
+        .privacy-copy {
+            color: var(--text-muted);
+            font-size: .72rem;
+            line-height: 1.5;
+        }
+        .privacy-list {
+            margin: 8px 0 0 18px;
+            color: var(--text-muted);
+            font-size: .7rem;
+            line-height: 1.5;
+        }
+        .privacy-list li + li { margin-top: 4px; }
+        .privacy-support-note {
+            margin-top: 10px;
+            padding-top: 9px;
+            border-top: 1px solid rgba(255,255,255,.08);
+            color: var(--text-muted);
+            font-size: .68rem;
+            line-height: 1.45;
+        }
+
+        /* Il builder decide il layout dalla larghezza effettiva del drawer. */
+        .workout-builder {
+            container-type: inline-size;
+            container-name: workout-builder;
+            min-width: 0;
+        }
+        .builder-card,
+        .builder-card-split,
+        .builder-card-part,
+        .builder-stepper,
+        .builder-value {
+            min-width: 0;
+            max-width: 100%;
+        }
+        .builder-card-split {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+        .builder-stepper {
+            width: 100%;
+            grid-template-columns: minmax(40px, 52px) minmax(0, 1fr) minmax(40px, 52px);
+            gap: clamp(4px, 1.5cqw, 8px);
+        }
+        .builder-step-btn {
+            width: 100%;
+            max-width: 52px;
+            min-width: 0;
+            justify-self: center;
+        }
+        .builder-value {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        @container workout-builder (min-width: 390px) {
+            .builder-card-split {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+            .builder-card-part + .builder-card-part {
+                border-top: 0;
+                border-left: 1px solid rgba(255,255,255,.09);
+            }
+            .builder-stepper {
+                grid-template-columns: minmax(38px, 46px) minmax(0, 1fr) minmax(38px, 46px);
+                gap: 4px;
+            }
+            .builder-step-btn { max-width: 46px; }
+            .builder-value { font-size: clamp(1.55rem, 7cqw, 1.9rem); }
+        }
+
+        /* Landscape reale: timer a sinistra, informazioni e comandi a destra. */
+        @media (orientation: landscape) and (min-width: 640px) and (max-height: 620px) {
+            #app-header {
+                height: calc(env(safe-area-inset-top, 0px) + 56px);
+                padding-top: calc(env(safe-area-inset-top, 0px) + 5px);
+                padding-bottom: 5px;
+                padding-left: max(12px, env(safe-area-inset-left, 0px));
+                padding-right: max(12px, env(safe-area-inset-right, 0px));
+            }
+            .header-action, #logo-header { width: 42px; height: 42px; }
+            #header-brand .brand-logo { width: 34px; height: 34px; }
+            #header-brand .brand-name { font-size: 1rem; }
+
+            #app {
+                height: 100dvh;
+                min-height: 100dvh;
+                overflow: hidden;
+                display: grid;
+                grid-template-columns: minmax(280px, 1.05fr) minmax(300px, .95fr);
+                grid-template-rows: auto auto auto auto;
+                column-gap: clamp(14px, 3vw, 34px);
+                row-gap: 2px;
+                align-content: center;
+                align-items: center;
+                padding-top: calc(env(safe-area-inset-top, 0px) + 61px);
+                padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+                padding-left: max(16px, env(safe-area-inset-left, 0px));
+                padding-right: max(16px, env(safe-area-inset-right, 0px));
+            }
+            #timer-display {
+                grid-column: 1;
+                grid-row: 1 / 5;
+                width: 100%;
+                height: 100%;
+                justify-content: center;
+                padding: 0;
+                margin: 0;
+            }
+            #phase-heading { margin: 0 0 3px; }
+            #phase-label { font-size: clamp(.92rem, 2.4vw, 1.2rem); }
+            #rounds-info { font-size: clamp(.62rem, 1.7vw, .82rem); }
+            #ring-stage {
+                width: min(43vw, calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 112px));
+                min-width: 205px;
+                max-width: 330px;
+            }
+            #phase-icon { width: clamp(38px, 7vw, 54px); height: clamp(38px, 7vw, 54px); margin-bottom: 2px; }
+            #big-number { font-size: clamp(3.1rem, 10vw, 6rem); }
+
+            #progress-dots-container {
+                display: flex !important;
+                grid-column: 2;
+                grid-row: 1;
+                width: 100%;
+                min-height: 16px;
+                padding: 2px 0;
+                margin: 0;
+            }
+            #progress-dots { max-width: 100%; }
+            #next-phase {
+                grid-column: 2;
+                grid-row: 2;
+                width: 100%;
+                min-height: 34px;
+                height: 34px;
+                margin: 2px 0;
+                padding: 4px 8px;
+                font-size: clamp(.58rem, 1.4vw, .72rem);
+            }
+            #next-phase.is-empty {
+                min-height: 34px !important;
+                height: 34px !important;
+                margin: 2px 0 !important;
+                padding: 4px 8px !important;
+            }
+            #workout-summary {
+                grid-column: 2;
+                grid-row: 3;
+                width: 100%;
+                gap: clamp(7px, 2vw, 16px);
+                padding: 4px 0;
+                margin: 0;
+            }
+            .summary-ring { width: clamp(42px, 7.6vw, 57px); height: clamp(42px, 7.6vw, 57px); }
+            .summary-label { font-size: clamp(.43rem, 1.2vw, .58rem); }
+            #controls {
+                grid-column: 2;
+                grid-row: 4;
+                width: 100%;
+                gap: clamp(8px, 2vw, 16px);
+                padding: 5px 0 0;
+            }
+            .ctrl-btn { width: clamp(54px, 9vw, 68px); height: clamp(54px, 9vw, 68px); }
+            .control-label { font-size: clamp(.42rem, 1.1vw, .55rem); }
+        }
+
+        @media (orientation: landscape) and (min-width: 1000px) and (min-height: 621px) {
+            #app {
+                max-width: 1180px;
+                display: grid;
+                grid-template-columns: minmax(430px, 1fr) minmax(390px, .82fr);
+                grid-template-rows: auto auto auto auto;
+                column-gap: 56px;
+                align-content: center;
+                overflow: hidden;
+            }
+            #timer-display { grid-column: 1; grid-row: 1 / 5; }
+            #progress-dots-container { grid-column: 2; grid-row: 1; }
+            #next-phase { grid-column: 2; grid-row: 2; }
+            #workout-summary { grid-column: 2; grid-row: 3; }
+            #controls { grid-column: 2; grid-row: 4; }
+            #ring-stage { width: min(48vh, 470px); }
+        }
+
 </style>
 </head>
 <body>
 
     <!-- HEADER APP: menu allenamento a sinistra, identità al centro, impostazioni a destra -->
-    <header id="app-header" aria-label="Barra superiore Timer">
-        <button id="logo-header" class="header-action" type="button" aria-label="Apri configurazione allenamento">
+    <header id="app-header" aria-label="Timer header">
+        <button id="logo-header" class="header-action" type="button" aria-label="Open workout configuration">
             <svg class="header-svg-icon hamburger-svg" aria-hidden="true" viewBox="0 0 32 32">
                 <path d="M5 9h22M5 16h22M5 23h22" />
             </svg>
@@ -2135,7 +2331,7 @@
             <span class="brand-name brand-name-timer">TIMER</span>
             <span class="brand-name brand-name-custom">TIMER</span>
         </div>
-        <button id="settings-open" class="header-action" type="button" aria-label="Apri impostazioni app">
+        <button id="settings-open" class="header-action" type="button" aria-label="Open app settings">
             <svg class="header-svg-icon gear-svg" aria-hidden="true" viewBox="0 0 24 24">
                 <path class="gear-fill" d="M19.14 12.94a7.49 7.49 0 0 0 .05-.94 7.49 7.49 0 0 0-.05-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.29 7.29 0 0 0-1.63-.94L14.38 2.8a.5.5 0 0 0-.49-.4h-3.84a.5.5 0 0 0-.49.4L9.2 5.32a7.29 7.29 0 0 0-1.63.94L5.18 5.3a.5.5 0 0 0-.61.22L2.65 8.84a.5.5 0 0 0 .12.64l2.03 1.58a7.49 7.49 0 0 0-.05.94c0 .32.02.63.05.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .61.22l2.39-.96c.5.39 1.05.71 1.63.94l.36 2.52a.5.5 0 0 0 .49.4h3.84a.5.5 0 0 0 .49-.4l.36-2.52a7.29 7.29 0 0 0 1.63-.94l2.39.96a.5.5 0 0 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z"/>
             </svg>
@@ -2146,7 +2342,7 @@
     <div id="overlay"></div>
 
     <!-- DRAWER -->
-    <div id="drawer">
+    <div id="drawer" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="builder-title">
         <div id="drawer-header">
             <div class="logo-large">
                 <img class="brand-logo brand-logo-krio" src="Logo-Blu.svg" alt="KrioPlanet">
@@ -2156,7 +2352,7 @@
                 <span class="brand-name-timer">TIMER</span>
                 <span class="brand-name-custom">TIMER</span>
             </div>
-            <button id="drawer-close" aria-label="Chiudi menu">✕</button>
+            <button id="drawer-close" aria-label="Close workout menu">✕</button>
         </div>
 
         <!-- CONFIGURAZIONE ALLENAMENTO -->
@@ -2255,10 +2451,10 @@
             <span class="chevron" aria-hidden="true">⌄</span>
         </button>
 
-        <div id="app-settings-panel" class="app-settings-panel" aria-hidden="true">
+        <div id="app-settings-panel" class="app-settings-panel" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="settings-drawer-title">
             <div class="settings-drawer-header">
-                <div><strong>IMPOSTAZIONI</strong><small>Suoni, tema e dispositivo</small></div>
-                <button id="settings-close" type="button" aria-label="Chiudi impostazioni">✕</button>
+                <div><strong id="settings-drawer-title">SETTINGS</strong><small>Sounds, theme and device</small></div>
+                <button id="settings-close" type="button" aria-label="Close settings">✕</button>
             </div>
             <section class="settings-group" aria-labelledby="settings-audio-title">
                 <h3 id="settings-audio-title" class="settings-group-title">Suoni e feedback</h3>
@@ -2395,11 +2591,27 @@
                 </div>
             </section>
 
+
+
+            <section class="settings-group" aria-labelledby="settings-privacy-title">
+                <h3 id="settings-privacy-title" class="settings-group-title">Privacy &amp; support</h3>
+                <div class="app-info-card">
+                    <p id="privacy-intro" class="privacy-copy">Timer works without an account and does not send data to a server.</p>
+                    <ul class="privacy-list">
+                        <li id="privacy-local-workouts">Workouts, preferences and branding settings are stored on this device.</li>
+                        <li id="privacy-indexeddb">A personal logo is stored locally in IndexedDB.</li>
+                        <li id="privacy-reset">Local data can be removed with the reset controls or browser site-data settings.</li>
+                        <li id="privacy-no-collection">This PWA does not currently collect analytics or personal data.</li>
+                    </ul>
+                    <p id="privacy-support" class="privacy-support-note">Publication information is provided in PRIVACY_POLICY.md and SUPPORT.md.</p>
+                </div>
+            </section>
+
             <section class="settings-group" aria-labelledby="settings-info-title">
                 <h3 id="settings-info-title" class="settings-group-title">Informazioni</h3>
                 <div class="app-info-card">
                     <div class="app-info-line"><span>App</span><strong>Timer</strong></div>
-                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">2.0.0-rc4</strong></div>
+                    <div class="app-info-line"><span>Versione</span><strong id="app-version-label">2.0.0</strong></div>
                     <div class="app-info-line"><span>Stato</span><span id="network-status" class="network-status"><span class="network-dot"></span><strong id="network-status-label">Online</strong></span></div>
                     <div class="app-info-line"><span>Copyright</span><strong>© 2026 MC</strong></div>
                 </div>
@@ -2412,9 +2624,9 @@
     </div>
 
     <!-- MODALE LIBRERIA WORKOUT -->
-    <div id="library-modal">
+    <div id="library-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="library-modal-title">
         <div class="modal-header">
-            <h2>📁 Libreria Workout</h2>
+            <h2 id="library-modal-title">Workout Library</h2>
             <button class="modal-close-btn" id="modal-close">✕</button>
         </div>
         <div class="modal-body">
@@ -2468,11 +2680,11 @@
         <!-- TESTO LIBERO: PROSSIMA FASE -->
         <div id="next-phase" aria-live="polite"></div>
 
-        <div id="workout-summary" aria-label="Composizione allenamento">
+        <div id="workout-summary" aria-label="Workout composition">
             <div class="summary-chip summary-work"><div class="summary-ring"><span class="summary-value" id="summary-work">30</span></div><span class="summary-label">Lavoro</span></div>
             <div class="summary-chip summary-rest"><div class="summary-ring"><span class="summary-value" id="summary-rest">15</span></div><span class="summary-label">Recupero</span></div>
             <div class="summary-chip summary-extra" id="summary-extra-chip"><div class="summary-ring"><span class="summary-value" id="summary-extra">1:00</span></div><span class="summary-label">Extra</span></div>
-            <div class="summary-chip summary-total" id="summary-total-chip" aria-live="polite"><div class="summary-ring"><span class="summary-value" id="summary-total">10:48</span></div><span class="summary-label">Totale</span></div>
+            <div class="summary-chip summary-total" id="summary-total-chip"><div class="summary-ring"><span class="summary-value" id="summary-total">10:48</span></div><span class="summary-label">Totale</span></div>
         </div>
 
         <!-- CONTROLLI -->
@@ -2491,7 +2703,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             "use strict";
 
-            var APP_VERSION = '2.0.0-rc4';
+            var APP_VERSION = '2.0.0';
             var PREFERENCES_KEY = 'kp_timer_preferences_v1';
             var DEFAULT_APP_PREFERENCES = {
                 soundEnabled: true,
@@ -2528,43 +2740,64 @@
             var modalCloseBtn = document.getElementById('modal-close');
             var settingsOpenBtn = document.getElementById('settings-open');
             var settingsCloseBtn = document.getElementById('settings-close');
+            var lastDrawerFocus = null;
+            var lastSettingsFocus = null;
+            var lastLibraryFocus = null;
 
-            function openDrawer() {
-                closeSettingsDrawer(false);
-                drawer.classList.add('open');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
+            function focusSoon(element) {
+                if (!element) return;
+                window.setTimeout(function() { try { element.focus({ preventScroll: true }); } catch (e) { element.focus(); } }, 0);
             }
 
-            function closeDrawer(hideOverlay) {
+            function openDrawer() {
+                lastDrawerFocus = document.activeElement;
+                closeSettingsDrawer(false, false);
+                drawer.classList.add('open');
+                drawer.setAttribute('aria-hidden', 'false');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                focusSoon(closeBtn);
+            }
+
+            function closeDrawer(hideOverlay, restoreFocus) {
                 drawer.classList.remove('open');
+                drawer.setAttribute('aria-hidden', 'true');
                 if (hideOverlay !== false && !appSettingsPanel.classList.contains('open')) overlay.classList.remove('active');
                 if (!appSettingsPanel.classList.contains('open')) document.body.style.overflow = '';
+                if (restoreFocus !== false && lastDrawerFocus) focusSoon(lastDrawerFocus);
             }
 
             function openSettingsDrawer() {
-                closeDrawer(false);
+                lastSettingsFocus = document.activeElement;
+                closeDrawer(false, false);
                 appSettingsPanel.classList.add('open');
                 appSettingsPanel.setAttribute('aria-hidden', 'false');
                 overlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                focusSoon(settingsCloseBtn);
             }
 
-            function closeSettingsDrawer(hideOverlay) {
+            function closeSettingsDrawer(hideOverlay, restoreFocus) {
                 if (!appSettingsPanel) return;
                 appSettingsPanel.classList.remove('open');
                 appSettingsPanel.setAttribute('aria-hidden', 'true');
                 if (hideOverlay !== false && !drawer.classList.contains('open')) overlay.classList.remove('active');
                 if (!drawer.classList.contains('open')) document.body.style.overflow = '';
+                if (restoreFocus !== false && lastSettingsFocus) focusSoon(lastSettingsFocus);
             }
 
             function openLibraryModal() {
+                lastLibraryFocus = document.activeElement;
                 renderLibraryItems();
                 libraryModal.classList.add('active');
+                libraryModal.setAttribute('aria-hidden', 'false');
+                focusSoon(modalCloseBtn);
             }
 
-            function closeLibraryModal() {
+            function closeLibraryModal(restoreFocus) {
                 libraryModal.classList.remove('active');
+                libraryModal.setAttribute('aria-hidden', 'true');
+                if (restoreFocus !== false && lastLibraryFocus) focusSoon(lastLibraryFocus);
             }
 
             logoBtn.addEventListener('click', openDrawer);
@@ -2572,11 +2805,15 @@
             settingsOpenBtn.addEventListener('click', openSettingsDrawer);
             settingsCloseBtn.addEventListener('click', function(){ closeSettingsDrawer(); });
             overlay.addEventListener('click', function() {
-                closeDrawer(false);
-                closeSettingsDrawer(false);
+                var drawerWasOpen = drawer.classList.contains('open');
+                var settingsWasOpen = appSettingsPanel.classList.contains('open');
+                closeDrawer(false, false);
+                closeSettingsDrawer(false, false);
                 overlay.classList.remove('active');
                 document.body.style.overflow = '';
-                closeLibraryModal();
+                closeLibraryModal(false);
+                if (settingsWasOpen && lastSettingsFocus) focusSoon(lastSettingsFocus);
+                else if (drawerWasOpen && lastDrawerFocus) focusSoon(lastDrawerFocus);
             });
 
             btnOpenLibrary.addEventListener('click', openLibraryModal);
@@ -3166,7 +3403,19 @@
                     next_work:'NEXT: WORK', next_rest:'NEXT: REST', next_extra:'NEXT: EXTRA',
                     last_completion:'FINAL PHASE: COMPLETION', completed:'WORKOUT COMPLETED',
                     paused_prefix:'PAUSED · ', summary_total:'TOTAL REMAINING',
-                    rounds_unit:'rounds', extra_disabled:'disabled'
+                    rounds_unit:'rounds', extra_disabled:'disabled',
+                    sound_digital:'Krio Digital', sound_energy:'Energy', sound_soft:'Soft', sound_retro:'Retro', sound_bell:'Bell', sound_minimal:'Minimal',
+                    alert_profile:'Use sound style', alert_double_bell:'Double bell', alert_alarm:'Alarm', alert_siren:'Siren', alert_buzzer:'Industrial buzzer', alert_whistle:'Whistle',
+                    online_ready:'Online · offline ready', offline_cache:'Offline · cache active',
+                    close_menu:'Close workout menu', close_settings:'Close settings', open_workout:'Open workout configuration', open_settings:'Open app settings', close_library:'Close workout library',
+                    workout_summary:'Workout composition', timeline_progress:'Workout phase progress', timeline_work:'Work · round {round}', timeline_rest:'Rest · after round {round}', timeline_extra:'Extra · after round {round}',
+                    invalid_logo:'Unsupported format. Use PNG, JPEG, WebP or SVG.', logo_save_error:'The logo could not be saved on this device.',
+                    reset_custom_confirm:'Reset the custom name, logo and colors?', reset_app_confirm:'Reset all app settings? Saved workouts will not be deleted.',
+                    custom_preview:'Brand preview', personal_logo:'Custom logo',
+                    privacy_support:'Privacy & support', privacy_intro:'Timer works without an account and does not send data to a server.',
+                    privacy_local_workouts:'Workouts, preferences and branding settings are stored on this device.', privacy_indexeddb:'A personal logo is stored locally in IndexedDB.',
+                    privacy_reset:'Local data can be removed with the reset controls or browser site-data settings.', privacy_no_collection:'This PWA does not currently collect analytics or personal data.',
+                    privacy_support_note:'Publication information is provided in PRIVACY_POLICY.md and SUPPORT.md.'
                 },
                 it: {
                     workout:'ALLENAMENTO', configure_session:'Configura la sessione', duration:'DURATA',
@@ -3203,7 +3452,19 @@
                     next_work:'PROSSIMO: LAVORO', next_rest:'PROSSIMO: RECUPERO', next_extra:'PROSSIMO: GIRO EXTRA',
                     last_completion:'ULTIMA FASE: COMPLETAMENTO', completed:'ALLENAMENTO COMPLETATO',
                     paused_prefix:'IN PAUSA · ', summary_total:'TOTALE RESIDUO',
-                    rounds_unit:'giri', extra_disabled:'disattivato'
+                    rounds_unit:'giri', extra_disabled:'disattivato',
+                    sound_digital:'Krio Digital', sound_energy:'Energia', sound_soft:'Morbido', sound_retro:'Retro', sound_bell:'Campana', sound_minimal:'Minimal',
+                    alert_profile:'Come stile suono', alert_double_bell:'Campana doppia', alert_alarm:'Sveglia', alert_siren:'Sirena', alert_buzzer:'Buzzer industriale', alert_whistle:'Fischietto',
+                    online_ready:'Online · offline pronto', offline_cache:'Offline · cache attiva',
+                    close_menu:'Chiudi menu allenamento', close_settings:'Chiudi impostazioni', open_workout:'Apri configurazione allenamento', open_settings:'Apri impostazioni app', close_library:'Chiudi libreria workout',
+                    workout_summary:'Composizione allenamento', timeline_progress:'Avanzamento delle fasi dell’allenamento', timeline_work:'Lavoro · giro {round}', timeline_rest:'Recupero · dopo giro {round}', timeline_extra:'Giro extra · dopo giro {round}',
+                    invalid_logo:'Formato non supportato. Usa PNG, JPEG, WebP o SVG.', logo_save_error:'Non è stato possibile salvare il logo su questo dispositivo.',
+                    reset_custom_confirm:'Ripristinare nome, logo e colori del tema personalizzato?', reset_app_confirm:'Ripristinare tutte le impostazioni dell’app? I workout salvati non verranno eliminati.',
+                    custom_preview:'Anteprima identità', personal_logo:'Logo personalizzato',
+                    privacy_support:'Privacy e supporto', privacy_intro:'Timer funziona senza account e non invia dati a server.',
+                    privacy_local_workouts:'Workout, preferenze e impostazioni di branding sono salvati su questo dispositivo.', privacy_indexeddb:'Il logo personale viene salvato localmente in IndexedDB.',
+                    privacy_reset:'I dati locali possono essere eliminati con i comandi di ripristino o dalle impostazioni dati del browser.', privacy_no_collection:'Questa PWA attualmente non raccoglie dati personali né dati analitici.',
+                    privacy_support_note:'Le informazioni per la pubblicazione sono disponibili in PRIVACY_POLICY.md e SUPPORT.md.'
                 }
             };
 
@@ -3305,6 +3566,38 @@
                 setText('.modal-header h2', t('library'));
                 if (librarySearchInput) librarySearchInput.placeholder = t('search');
 
+                var soundOptionKeys = {
+                    digital:'sound_digital', energy:'sound_energy', soft:'sound_soft', retro:'sound_retro', bell:'sound_bell', minimal:'sound_minimal'
+                };
+                Object.keys(soundOptionKeys).forEach(function(value) {
+                    var option = document.querySelector('#sound-profile-select option[value="' + value + '"]');
+                    if (option) option.textContent = t(soundOptionKeys[value]);
+                });
+                var alertOptionKeys = {
+                    profile:'alert_profile', 'double-bell':'alert_double_bell', alarm:'alert_alarm', siren:'alert_siren', buzzer:'alert_buzzer', whistle:'alert_whistle'
+                };
+                Object.keys(alertOptionKeys).forEach(function(value) {
+                    var option = document.querySelector('#end-alert-select option[value="' + value + '"]');
+                    if (option) option.textContent = t(alertOptionKeys[value]);
+                });
+
+                setText('#settings-privacy-title', t('privacy_support'));
+                setText('#privacy-intro', t('privacy_intro'));
+                setText('#privacy-local-workouts', t('privacy_local_workouts'));
+                setText('#privacy-indexeddb', t('privacy_indexeddb'));
+                setText('#privacy-reset', t('privacy_reset'));
+                setText('#privacy-no-collection', t('privacy_no_collection'));
+                setText('#privacy-support', t('privacy_support_note'));
+                setText('.custom-preview small', t('custom_preview'));
+
+                logoBtn.setAttribute('aria-label', t('open_workout'));
+                settingsOpenBtn.setAttribute('aria-label', t('open_settings'));
+                closeBtn.setAttribute('aria-label', t('close_menu'));
+                settingsCloseBtn.setAttribute('aria-label', t('close_settings'));
+                modalCloseBtn.setAttribute('aria-label', t('close_library'));
+                document.getElementById('workout-summary').setAttribute('aria-label', t('workout_summary'));
+                document.querySelectorAll('.brand-logo-custom').forEach(function(node) { node.alt = t('personal_logo'); });
+
                 var summaryLabels = document.querySelectorAll('.summary-label');
                 if (summaryLabels[0]) summaryLabels[0].textContent = t('work');
                 if (summaryLabels[1]) summaryLabels[1].textContent = t('rest');
@@ -3328,7 +3621,7 @@
             function updateNetworkStatus() {
                 var online = navigator.onLine;
                 networkStatus.classList.toggle('offline', !online);
-                networkStatusLabel.textContent = online ? 'Online · offline pronto' : 'Offline · cache attiva';
+                networkStatusLabel.textContent = online ? t('online_ready') : t('offline_cache');
             }
 
             function applyAppPreferencesToUI() {
@@ -3443,7 +3736,7 @@
                     if (!file) return;
                     var allowed = ['image/png','image/jpeg','image/webp','image/svg+xml'];
                     if (allowed.indexOf(file.type) === -1) {
-                        alert('Formato non supportato. Usa PNG, JPEG, WebP o SVG.');
+                        alert(t('invalid_logo'));
                         return;
                     }
                     if (file.size > 2 * 1024 * 1024) {
@@ -3454,7 +3747,7 @@
                         applyCustomLogoBlob(file);
                         if (appPreferences.theme !== 'custom') applyTheme('custom');
                     }).catch(function() {
-                        alert('Non è stato possibile salvare il logo su questo dispositivo.');
+                        alert(t('logo_save_error'));
                     });
                 });
             }
@@ -3467,7 +3760,7 @@
 
             if (btnResetCustomTheme) {
                 btnResetCustomTheme.addEventListener('click', function() {
-                    if (!confirm('Ripristinare nome, logo e colori del tema personalizzato?')) return;
+                    if (!confirm(t('reset_custom_confirm'))) return;
                     appPreferences.customBrandName = DEFAULT_APP_PREFERENCES.customBrandName;
                     appPreferences.customBackground = DEFAULT_APP_PREFERENCES.customBackground;
                     appPreferences.customIconColor = DEFAULT_APP_PREFERENCES.customIconColor;
@@ -3491,7 +3784,7 @@
             btnPreviewEndAlert.addEventListener('click', previewEndAlert);
 
             btnResetAppSettings.addEventListener('click', function() {
-                if (!confirm('Ripristinare tutte le impostazioni dell’app? I workout salvati non verranno eliminati.')) return;
+                if (!confirm(t('reset_app_confirm'))) return;
                 appPreferences = Object.assign({}, DEFAULT_APP_PREFERENCES);
                 tickEnabled = false;
                 saveAppPreferences();
@@ -3811,13 +4104,15 @@
                 var sessions = buildSessionTimeline();
                 var currentIndex = getCurrentSessionIndex(sessions);
                 progressDots.innerHTML = '';
-                progressDots.setAttribute('aria-label', 'Avanzamento delle fasi dell’allenamento');
+                progressDots.setAttribute('aria-label', t('timeline_progress'));
 
                 sessions.forEach(function(session, index) {
                     var dot = document.createElement('span');
+                    var labelKey = session.type === 'work' ? 'timeline_work' : (session.type === 'rest' ? 'timeline_rest' : 'timeline_extra');
+                    var localizedLabel = t(labelKey, { round: session.round });
                     dot.className = 'dot phase-' + session.type;
-                    dot.title = session.label;
-                    dot.setAttribute('aria-label', session.label);
+                    dot.title = localizedLabel;
+                    dot.setAttribute('aria-label', localizedLabel);
 
                     if (timerState.status === 'finished' || (currentIndex >= 0 && index < currentIndex)) {
                         dot.classList.add('done');
