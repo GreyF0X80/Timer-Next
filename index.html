@@ -4636,16 +4636,16 @@
 
             bindStepper('dec-preparation', valPreparation, -1, 0, 30);
             bindStepper('inc-preparation', valPreparation, 1, 0, 30);
-            bindStepper('dec-work', valWork, -5, 5, 300);
-            bindStepper('inc-work', valWork, 5, 5, 300);
-            bindStepper('dec-rest', valRest, -5, 0, 300);
-            bindStepper('inc-rest', valRest, 5, 0, 300);
+            bindStepper('dec-work', valWork, -1, 5, 300);
+            bindStepper('inc-work', valWork, 1, 5, 300);
+            bindStepper('dec-rest', valRest, -1, 0, 300);
+            bindStepper('inc-rest', valRest, 1, 0, 300);
             bindStepper('dec-rounds', valRounds, -1, 1, 99);
             bindStepper('inc-rounds', valRounds, 1, 1, 99);
             bindStepper('dec-extra-every', valExtraEvery, -1, 0, 99);
             bindStepper('inc-extra-every', valExtraEvery, 1, 0, 99);
-            bindStepper('dec-extra-dur', valExtraDur, -5, 5, 600);
-            bindStepper('inc-extra-dur', valExtraDur, 5, 5, 600);
+            bindStepper('dec-extra-dur', valExtraDur, -1, 5, 600);
+            bindStepper('inc-extra-dur', valExtraDur, 1, 5, 600);
 
             presetBtns.forEach(function(btn) {
                 btn.addEventListener('click', function() {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'timer-v2.0.0-2026-07-30';
+const CACHE_NAME = 'timer-v2.0.0-2026-07-30-2';
 const CACHE_PREFIX = 'timer-';
 const CORE_ASSETS = [
   './',

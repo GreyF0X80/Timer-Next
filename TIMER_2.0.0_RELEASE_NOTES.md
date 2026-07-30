@@ -17,6 +17,7 @@ Timer 2.0.0 è una PWA offline-first per allenamenti a intervalli, HIIT, Tabata,
 - preset HIIT, Tabata, Strength e Cardio;
 - libreria workout locale;
 - controlli touch con pressione prolungata;
+- regolazione di Lavoro, Recupero e Durata Extra con incrementi precisi di 1 secondo;
 - suoni, avvisi finali, countdown, tick e vibrazione;
 - Wake Lock automatico quando supportato;
 - temi Standard, KrioPlanet e Personalizzato;
